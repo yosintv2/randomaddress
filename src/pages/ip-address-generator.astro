@@ -1,0 +1,74 @@
+---
+import Layout from '../layouts/Layout.astro';
+import GeneratorTool from '../components/GeneratorTool.astro';
+import ToolCard from '../components/ToolCard.astro';
+import FAQs from '../components/FAQs.astro';
+import Breadcrumbs from '../components/Breadcrumbs.astro';
+import { buildTitle, SITE_URL, getFAQSchema, getWebPageSchema } from '../lib/seo';
+const title = buildTitle('US IP Address Generator - Random US IP Addresses');
+const description = 'Generate random US IP addresses for testing and development.';
+const keywords = 'IP generator, random IP address, US IP, IP address generator, test IP';
+const canonical = `${SITE_URL}/ip-address-generator/`;
+const faqs = [
+  { question: 'What is an IP address generator?', answer: 'An IP address generator creates random IPv4 addresses for testing and development purposes.' },
+  { question: 'Are these real IP addresses?', answer: 'These are randomly generated IP addresses using common US IP prefixes. They are not connected to any real device or network.' },
+  { question: 'What IP versions are generated?', answer: 'The generator produces IPv4 addresses with realistic US-based prefixes.' },
+  { question: 'Can I use these for testing?', answer: 'Yes, these IP addresses are perfect for testing network applications, security tools, and populating databases.' },
+  { question: 'How many IPs are generated at once?', answer: 'The generator produces ten IP addresses at a time.' },
+  { question: 'Is this tool free?', answer: 'Yes, our IP address generator is completely free to use with no registration required.' },
+];
+---
+
+<Layout title={title} description={description} keywords={keywords} canonical={canonical}>
+  <script slot="schema" type="application/ld+json" set:html={JSON.stringify(getWebPageSchema(title, description, canonical))} />
+  <script slot="schema" type="application/ld+json" set:html={JSON.stringify(getFAQSchema(faqs))} />
+  <Breadcrumbs items={[
+    { name: 'Home', url: '/' },
+    { name: 'US IP Address Generator', url: '/ip-address-generator/' },
+  ]} />
+  <GeneratorTool
+    title="US IP Address Generator"
+    description={description}
+  >
+    <div class="glass-card rounded-2xl p-6 sm:p-8 fade-in">
+      <div class="space-y-2" id="ip-list"></div>
+    </div>
+  </GeneratorTool>
+  <script is:inline>
+  (function () {
+    function render() {
+      fetch("/api/ips.json?count=200").then(function (r) { return r.json(); }).then(function (ips) {
+        var c = document.getElementById("ip-list");
+        if (!c) return;
+        c.innerHTML = "";
+        ips.forEach(function (ip) {
+          var d = document.createElement("div");
+          d.className = "font-mono text-sm text-gray-900 dark:text-gray-100 bg-gray-50 dark:bg-slate-700 rounded-xl px-4 py-2.5";
+          d.textContent = ip;
+          c.appendChild(d);
+        });
+      }).catch(function () {});
+    }
+    document.addEventListener("DOMContentLoaded", render);
+    document.addEventListener("click", function (e) { if (e.target.closest("[data-regenerate]")) { render(); } });
+  })();
+  </script>
+
+  <section class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
+    <div class="max-w-3xl mx-auto">
+      <h2 class="text-2xl font-bold text-gray-900 mb-4">About US IP Address Generator</h2>
+      <p class="text-gray-600 leading-relaxed mb-4">Our US IP address generator creates 200 random IPv4 addresses using realistic US-based IP prefixes. Each address follows the standard IPv4 format with octets ranging from common US-assigned blocks.</p>
+      <p class="text-gray-600 leading-relaxed mb-4">Perfect for testing network applications, security tools, log simulation, database population, and any development scenario that requires realistic US IP addresses.</p>
+    </div>
+    <div class="mt-12">
+      <h3 class="text-xl font-semibold text-gray-900 mb-6 text-center">Related Tools</h3>
+      <div class="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
+        <ToolCard href="/random-us-address/" title="US Address Generator" description="Generate random US addresses for testing and development." />
+        <ToolCard href="/random-person-generator/" title="Person Generator" description="Generate complete person profiles with address, phone, and email." />
+        <ToolCard href="/phone-number-generator/" title="Phone Number Generator" description="Generate random US phone numbers by state." />
+      </div>
+    </div>
+  </section>
+
+  <FAQs faqs={faqs} />
+</Layout>
