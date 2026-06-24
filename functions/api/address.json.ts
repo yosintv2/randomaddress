@@ -1,0 +1,23 @@
+import { generateAddress, generateAddressForState, generateAddressForCity, generateAddressForZip } from '../../src/lib/generator';
+
+export async function onRequestGet(context) {
+  const url = new URL(context.request.url);
+  const state = url.searchParams.get('state');
+  const city = url.searchParams.get('city');
+  const zip = url.searchParams.get('zip');
+
+  let address;
+  if (zip) {
+    address = generateAddressForZip(zip);
+  } else if (city) {
+    address = generateAddressForCity(city);
+  } else if (state) {
+    address = generateAddressForState(state);
+  } else {
+    address = generateAddress();
+  }
+
+  return new Response(JSON.stringify(address), {
+    headers: { 'Content-Type': 'application/json', 'Cache-Control': 'no-cache' },
+  });
+}

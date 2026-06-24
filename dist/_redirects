@@ -1,0 +1,3 @@
+# Legacy redirects
+/fake-email-generator/*  /email-generator/:splat  301
+/test-address-generator*  /us-address-generator/:splat  301
