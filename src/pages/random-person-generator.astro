@@ -2,14 +2,34 @@
 import Layout from '../layouts/Layout.astro';
 import GeneratorTool from '../components/GeneratorTool.astro';
 import Breadcrumbs from '../components/Breadcrumbs.astro';
-import { generatePerson } from '../lib/generator';
+import firstNames from '../data/firstNames.json';
+import lastNames from '../data/lastNames.json';
+import streets from '../data/streets.json';
+import cities from '../data/cities.json';
+import zipcodes from '../data/zipcodes.json';
+import statesData from '../data/states.json';
 import { buildTitle, SITE_URL } from '../lib/seo';
 const title = buildTitle('Random Person Generator - Generate Random People');
 const description = 'Generate random people with complete details including name, age, address, phone number, email, and username.';
 const keywords = 'random person generator, person profile generator, random identity, test data generator, random profile';
 const canonical = `${SITE_URL}/random-person-generator/`;
 
-const person = generatePerson();
+const DATA = { firstNames, lastNames, streets, cities, zipcodes, states: statesData };
+const dataJson = JSON.stringify(DATA);
+const script = `(function(){
+var D=${dataJson};
+function p(a){return a[Math.floor(Math.random()*a.length)]}
+function gs(n){var s=D.states.find(function(s){return s.name===n});return s?s.abbr:""}
+var DM=["gmail.com","yahoo.com","outlook.com","hotmail.com","aol.com","icloud.com","protonmail.com"];
+function ge(fn,ln){return fn.toLowerCase()+"."+ln.toLowerCase()+Math.floor(Math.random()*999)+"@"+p(DM)}
+var AC={CA:"213",TX:"713",NY:"212",FL:"305",IL:"312",PA:"215",OH:"614",GA:"404",NC:"704",MI:"313",NJ:"201",VA:"703",WA:"206",AZ:"602",MA:"617",TN:"615",IN:"317",MO:"314",MD:"301",WI:"414",CO:"303",MN:"612",SC:"803",AL:"205",LA:"504",KY:"502",OR:"503",OK:"405",CT:"203",IA:"515",MS:"601",AR:"501",KS:"913",UT:"801",NV:"702",NM:"505",WV:"304",NE:"402",ID:"208",HI:"808",ME:"207",NH:"603",RI:"401",MT:"406",DE:"302",SD:"605",ND:"701",AK:"907",VT:"802",WY:"307"};
+function gp(a){var c=AC[a]||"555";return "("+c+")"+String(Math.floor(Math.random()*900)+100)+"-"+String(Math.floor(Math.random()*9000)+1000)}
+function gen(){var fn=p(D.firstNames),ln=p(D.lastNames),g=Math.random()>0.5?"Male":"Female",age=Math.floor(Math.random()*70)+18,sn=String(Math.floor(Math.random()*9999)+1),st=p(D.streets),cd=p(D.cities),zd=p(D.zipcodes),sa=gs(cd.state);return{name:fn+" "+ln,firstName:fn,lastName:ln,gender:g,age:age,street:sn+" "+st,city:cd.city,state:cd.state,zip:zd.zip,phone:gp(sa),email:ge(fn,ln),username:fn.toLowerCase()+ln.toLowerCase()+Math.floor(Math.random()*100)}}
+function rn(a){document.querySelectorAll("[data-pf]").forEach(function(e){e.textContent=a[e.getAttribute("data-pf")]});var b=document.querySelector("[data-copy-person]");if(b){b.setAttribute("data-address",a.name+", "+a.gender+", Age "+a.age+", "+a.street+", "+a.city+", "+a.state+" "+a.zip+", Phone: "+a.phone+", Email: "+a.email+", Username: "+a.username)}}
+document.addEventListener("DOMContentLoaded",function(){rn(gen())});
+document.addEventListener("click",function(e){if(e.target.closest("[data-regenerate]")){rn(gen())}});
+document.addEventListener("click",function(e){var b=e.target.closest("[data-copy-person]");if(!b)return;var t=b.getAttribute("data-address")||"";navigator.clipboard.writeText(t).then(function(){var d=document.getElementById("toast");if(!d){d=document.createElement("div");d.id="toast";d.className="fixed bottom-24 left-1/2 -translate-x-1/2 z-50 bg-gray-900 text-white text-sm font-medium px-5 py-3 rounded-xl shadow-2xl animate-slide-up";document.body.appendChild(d)}d.textContent="Copied to clipboard!";setTimeout(function(){d.style.animation="toastOut 0.3s ease-out forwards";setTimeout(function(){if(d&&d.parentNode)d.parentNode.removeChild(d)},300)},2000)})});
+})();`;
 ---
 
 <Layout title={title} description={description} keywords={keywords} canonical={canonical}>
@@ -23,24 +43,26 @@ const person = generatePerson();
   >
     <div class="glass-card rounded-2xl p-6 sm:p-8 fade-in">
       <div class="grid grid-cols-2 gap-x-6 gap-y-4 text-sm">
-        {[
-          { label: 'Name', value: person.name, span: false },
-          { label: 'Gender', value: person.gender, span: false },
-          { label: 'Age', value: String(person.age), span: false },
-          { label: 'Username', value: person.username, span: false },
-          { label: 'Street', value: person.street, span: true },
-          { label: 'City', value: person.city, span: false },
-          { label: 'State', value: person.state, span: false },
-          { label: 'ZIP', value: person.zip, span: false },
-          { label: 'Phone', value: person.phone, span: false },
-          { label: 'Email', value: person.email, span: true },
-        ].map(f => (
-          <div class={f.span ? 'col-span-2' : ''}>
-            <span class="text-xs font-medium uppercase tracking-wider text-gray-400">{f.label}</span>
-            <p class="mt-1 font-semibold text-gray-900">{f.value}</p>
-          </div>
-        ))}
+        {['name','gender','age','username','street','city','state','zip','phone','email'].map(f => {
+          const isSpan = ['street','email'].includes(f);
+          const labels: Record<string, string> = { name:'Name', gender:'Gender', age:'Age', username:'Username', street:'Street', city:'City', state:'State', zip:'ZIP', phone:'Phone', email:'Email' };
+          return (
+            <div class={isSpan ? 'col-span-2' : ''}>
+              <span class="text-xs font-medium uppercase tracking-wider text-gray-400">{labels[f]}</span>
+              <p class="mt-1 font-semibold text-gray-900" data-pf={f}></p>
+            </div>
+          );
+        })}
+      </div>
+      <div class="mt-6 pt-4 border-t border-gray-100 flex gap-3">
+        <button data-copy-person class="flex-1 btn-primary text-sm px-4 py-2.5">
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 5H6a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2v-1M8 5a2 2 0 002 2h2a2 2 0 002-2M8 5a2 2 0 012-2h2a2 2 0 012 2m0 0h2a2 2 0 012 2v3m2 4H10m0 0l3-3m-3 3l3 3"/>
+          </svg>
+          Copy Profile
+        </button>
       </div>
     </div>
   </GeneratorTool>
+  <script is:inline set:html={script} />
 </Layout>

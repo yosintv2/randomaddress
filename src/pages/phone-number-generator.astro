@@ -2,14 +2,23 @@
 import Layout from '../layouts/Layout.astro';
 import GeneratorTool from '../components/GeneratorTool.astro';
 import Breadcrumbs from '../components/Breadcrumbs.astro';
-import { generatePhoneNumber } from '../lib/generator';
 import { buildTitle, SITE_URL } from '../lib/seo';
 const title = buildTitle('Phone Number Generator - Random US Phone Numbers');
 const description = 'Generate random US phone numbers with realistic area codes for all 50 states.';
 const keywords = 'phone number generator, random phone number, US phone number, test phone number, free phone number';
 const canonical = `${SITE_URL}/phone-number-generator/`;
 
-const phones = Array.from({ length: 5 }, () => generatePhoneNumber());
+const AC = { CA:"213",TX:"713",NY:"212",FL:"305",IL:"312",PA:"215",OH:"614",GA:"404",NC:"704",MI:"313",NJ:"201",VA:"703",WA:"206",AZ:"602",MA:"617",TN:"615",IN:"317",MO:"314",MD:"301",WI:"414",CO:"303",MN:"612",SC:"803",AL:"205",LA:"504",KY:"502",OR:"503",OK:"405",CT:"203",IA:"515",MS:"601",AR:"501",KS:"913",UT:"801",NV:"702",NM:"505",WV:"304",NE:"402",ID:"208",HI:"808",ME:"207",NH:"603",RI:"401",MT:"406",DE:"302",SD:"605",ND:"701",AK:"907",VT:"802",WY:"307" };
+const states = Object.keys(AC);
+const dataJson = JSON.stringify({ states, areaCodes: AC });
+const script = `(function(){
+var D=${dataJson};
+function gp(){var s=D.states[Math.floor(Math.random()*D.states.length)],a=D.areaCodes[s]||"555";return "("+a+")"+String(Math.floor(Math.random()*900)+100)+"-"+String(Math.floor(Math.random()*9000)+1000)}
+function render(){var c=document.getElementById("phone-list");if(!c)return;c.innerHTML="";for(var i=0;i<5;i++){(function(pn){var d=document.createElement("div");d.className="flex items-center justify-between bg-gray-50 dark:bg-slate-700 rounded-xl px-4 py-3 font-mono text-gray-900 dark:text-gray-100 text-lg";d.innerHTML='<span>'+pn+'</span><button class="text-gray-400 hover:text-brand-600 transition-colors" data-copy-pn="'+pn+'"><svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 5H6a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2v-1M8 5a2 2 0 002 2h2a2 2 0 002-2M8 5a2 2 0 012-2h2a2 2 0 012 2m0 0h2a2 2 0 012 2v3m2 4H10m0 0l3-3m-3 3l3 3"/></svg></button>';c.appendChild(d)})(gp())}}
+document.addEventListener("DOMContentLoaded",render);
+document.addEventListener("click",function(e){if(e.target.closest("[data-regenerate]")){render()}});
+document.addEventListener("click",function(e){var b=e.target.closest("[data-copy-pn]");if(!b)return;navigator.clipboard.writeText(b.getAttribute("data-copy-pn")||"");var o=b.innerHTML;b.innerHTML='<svg class="w-5 h-5 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>';setTimeout(function(){b.innerHTML=o},1500)});
+})();`;
 ---
 
 <Layout title={title} description={description} keywords={keywords} canonical={canonical}>
@@ -22,28 +31,8 @@ const phones = Array.from({ length: 5 }, () => generatePhoneNumber());
     description={description}
   >
     <div class="glass-card rounded-2xl p-6 sm:p-8 fade-in">
-      <div class="space-y-3">
-        {phones.map(phone => (
-          <div class="flex items-center justify-between bg-gray-50 rounded-xl px-4 py-3 font-mono text-gray-900 text-lg">
-            <span>{phone}</span>
-            <button data-copy-phone={phone} class="text-gray-400 hover:text-brand-600 transition-colors">
-              <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 5H6a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2v-1M8 5a2 2 0 002 2h2a2 2 0 002-2M8 5a2 2 0 012-2h2a2 2 0 012 2m0 0h2a2 2 0 012 2v3m2 4H10m0 0l3-3m-3 3l3 3"/>
-              </svg>
-            </button>
-          </div>
-        ))}
-      </div>
+      <div class="space-y-3" id="phone-list"></div>
     </div>
-    <script>
-      document.querySelectorAll('[data-copy-phone]').forEach(btn => {
-        btn.addEventListener('click', () => {
-          navigator.clipboard.writeText(btn.getAttribute('data-copy-phone') || '');
-          const orig = btn.innerHTML;
-          btn.innerHTML = '<svg class="w-5 h-5 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>';
-          setTimeout(() => { btn.innerHTML = orig; }, 1500);
-        });
-      });
-    </script>
   </GeneratorTool>
+  <script is:inline set:html={script} />
 </Layout>

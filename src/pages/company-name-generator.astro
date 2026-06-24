@@ -2,14 +2,22 @@
 import Layout from '../layouts/Layout.astro';
 import GeneratorTool from '../components/GeneratorTool.astro';
 import Breadcrumbs from '../components/Breadcrumbs.astro';
-import { generateCompanyName } from '../lib/generator';
 import { buildTitle, SITE_URL } from '../lib/seo';
 const title = buildTitle('Company Name Generator - Random Company Names');
 const description = 'Generate random company and business names for brainstorming and testing.';
-const keywords = 'company name generator, business name generator, random company name, LLC name generator, fake company name';
+const keywords = 'company name generator, business name generator, random company name, LLC name generator, business name ideas';
 const canonical = `${SITE_URL}/company-name-generator/`;
 
-const companies = Array.from({ length: 10 }, () => generateCompanyName());
+const prefixes = ['Tech', 'Global', 'Prime', 'Core', 'Elite', 'Peak', 'Summit', 'Apex', 'Nova', 'Metro', 'Urban', 'Coast', 'Valley', 'Pioneer', 'Legacy'];
+const suffixes = ['Solutions', 'Group', 'Systems', 'Technologies', 'Enterprises', 'Industries', 'Partners', 'Associates', 'Services', 'Consulting', 'Corp', 'Inc', 'LLC', 'Co', 'Ventures'];
+const dataJson = JSON.stringify({ prefixes, suffixes });
+const script = `(function(){
+var D=${dataJson};
+function p(a){return a[Math.floor(Math.random()*a.length)]}
+function render(){var c=document.getElementById("company-list");if(!c)return;c.innerHTML="";for(var i=0;i<10;i++){var d=document.createElement("div");d.className="text-lg font-semibold text-gray-900 dark:text-gray-100 bg-gray-50 dark:bg-slate-700 rounded-xl px-4 py-3";d.textContent=p(D.prefixes)+" "+p(D.suffixes);c.appendChild(d)}}
+document.addEventListener("DOMContentLoaded",render);
+document.addEventListener("click",function(e){if(e.target.closest("[data-regenerate]")){render()}});
+})();`;
 ---
 
 <Layout title={title} description={description} keywords={keywords} canonical={canonical}>
@@ -22,11 +30,8 @@ const companies = Array.from({ length: 10 }, () => generateCompanyName());
     description={description}
   >
     <div class="glass-card rounded-2xl p-6 sm:p-8 fade-in">
-      <div class="space-y-2">
-        {companies.map(c => (
-          <div class="text-lg font-semibold text-gray-900 bg-gray-50 rounded-xl px-4 py-3">{c}</div>
-        ))}
-      </div>
+      <div class="space-y-2" id="company-list"></div>
     </div>
   </GeneratorTool>
+  <script is:inline set:html={script} />
 </Layout>

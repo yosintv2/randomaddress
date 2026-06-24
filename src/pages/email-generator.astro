@@ -2,14 +2,24 @@
 import Layout from '../layouts/Layout.astro';
 import GeneratorTool from '../components/GeneratorTool.astro';
 import Breadcrumbs from '../components/Breadcrumbs.astro';
-import { generateEmail } from '../lib/generator';
+import firstNames from '../data/firstNames.json';
+import lastNames from '../data/lastNames.json';
 import { buildTitle, SITE_URL } from '../lib/seo';
 const title = buildTitle('Email Generator - Random Email Addresses');
 const description = 'Generate random email addresses for testing and development purposes.';
 const keywords = 'email generator, random email address, test email, temporary email, disposable email';
 const canonical = `${SITE_URL}/email-generator/`;
 
-const emails = Array.from({ length: 10 }, () => generateEmail());
+const dataJson = JSON.stringify({ firstNames, lastNames });
+const script = `(function(){
+var D=${dataJson};
+function p(a){return a[Math.floor(Math.random()*a.length)]}
+var DM=["gmail.com","yahoo.com","outlook.com","hotmail.com","aol.com","icloud.com","protonmail.com"];
+function ge(){var fn=p(D.firstNames),ln=p(D.lastNames);return fn.toLowerCase()+"."+ln.toLowerCase()+Math.floor(Math.random()*999)+"@"+p(DM)}
+function render(){var c=document.getElementById("email-list");if(!c)return;c.innerHTML="";for(var i=0;i<10;i++){var d=document.createElement("div");d.className="font-mono text-sm text-gray-900 dark:text-gray-100 bg-gray-50 dark:bg-slate-700 rounded-xl px-4 py-2.5";d.textContent=ge();c.appendChild(d)}}
+document.addEventListener("DOMContentLoaded",render);
+document.addEventListener("click",function(e){if(e.target.closest("[data-regenerate]")){render()}});
+})();`;
 ---
 
 <Layout title={title} description={description} keywords={keywords} canonical={canonical}>
@@ -22,11 +32,8 @@ const emails = Array.from({ length: 10 }, () => generateEmail());
     description={description}
   >
     <div class="glass-card rounded-2xl p-6 sm:p-8 fade-in">
-      <div class="space-y-2">
-        {emails.map(email => (
-          <div class="font-mono text-sm text-gray-900 bg-gray-50 rounded-xl px-4 py-2.5">{email}</div>
-        ))}
-      </div>
+      <div class="space-y-2" id="email-list"></div>
     </div>
   </GeneratorTool>
+  <script is:inline set:html={script} />
 </Layout>

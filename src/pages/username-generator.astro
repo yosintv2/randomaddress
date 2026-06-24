@@ -2,14 +2,23 @@
 import Layout from '../layouts/Layout.astro';
 import GeneratorTool from '../components/GeneratorTool.astro';
 import Breadcrumbs from '../components/Breadcrumbs.astro';
-import { generateUsername } from '../lib/generator';
+import firstNames from '../data/firstNames.json';
+import lastNames from '../data/lastNames.json';
 import { buildTitle, SITE_URL } from '../lib/seo';
 const title = buildTitle('Username Generator - Random Usernames');
 const description = 'Generate random usernames for testing, gaming, and online profiles.';
-const keywords = 'username generator, random username, fake username, username ideas, cool usernames';
+const keywords = 'username generator, random username, username ideas, cool usernames, username creator';
 const canonical = `${SITE_URL}/username-generator/`;
 
-const usernames = Array.from({ length: 10 }, () => generateUsername());
+const dataJson = JSON.stringify({ firstNames, lastNames });
+const script = `(function(){
+var D=${dataJson};
+function p(a){return a[Math.floor(Math.random()*a.length)]}
+function gu(){var fn=p(D.firstNames),ln=p(D.lastNames),num=Math.floor(Math.random()*9999);var styles=[fn.toLowerCase()+ln.toLowerCase(),fn.toLowerCase()+"."+ln.toLowerCase(),fn.toLowerCase()+"_"+ln.toLowerCase(),fn.toLowerCase()+num,ln.toLowerCase()+num];return p(styles)}
+function render(){var c=document.getElementById("username-list");if(!c)return;c.innerHTML="";for(var i=0;i<10;i++){var d=document.createElement("div");d.className="font-mono text-sm text-gray-900 dark:text-gray-100 bg-gray-50 dark:bg-slate-700 rounded-xl px-4 py-2.5";d.textContent=gu();c.appendChild(d)}}
+document.addEventListener("DOMContentLoaded",render);
+document.addEventListener("click",function(e){if(e.target.closest("[data-regenerate]")){render()}});
+})();`;
 ---
 
 <Layout title={title} description={description} keywords={keywords} canonical={canonical}>
@@ -22,11 +31,8 @@ const usernames = Array.from({ length: 10 }, () => generateUsername());
     description={description}
   >
     <div class="glass-card rounded-2xl p-6 sm:p-8 fade-in">
-      <div class="space-y-2">
-        {usernames.map(u => (
-          <div class="font-mono text-gray-900 bg-gray-50 rounded-xl px-4 py-2.5">{u}</div>
-        ))}
-      </div>
+      <div class="space-y-2" id="username-list"></div>
     </div>
   </GeneratorTool>
+  <script is:inline set:html={script} />
 </Layout>
