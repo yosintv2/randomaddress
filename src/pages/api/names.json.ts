@@ -1,7 +1,10 @@
-import { generatePerson } from '../../src/lib/generator';
+import type { APIRoute } from 'astro';
+import { generatePerson } from '../../lib/generator';
 
-export async function onRequestGet(context) {
-  const url = new URL(context.request.url);
+export const prerender = false;
+
+export const GET: APIRoute = async ({ request }) => {
+  const url = new URL(request.url);
   const count = Math.min(parseInt(url.searchParams.get('count') || '10'), 100);
   const names = Array.from({ length: count }, () => {
     const p = generatePerson();
@@ -10,4 +13,4 @@ export async function onRequestGet(context) {
   return new Response(JSON.stringify(names), {
     headers: { 'Content-Type': 'application/json', 'Cache-Control': 'no-cache' },
   });
-}
+};

@@ -1,7 +1,10 @@
-import { generateAddress, generateAddressForState, generateAddressForCity, generateAddressForZip } from '../../src/lib/generator';
+import type { APIRoute } from 'astro';
+import { generateAddress, generateAddressForState, generateAddressForCity, generateAddressForZip } from '../../lib/generator';
 
-export async function onRequestGet(context) {
-  const url = new URL(context.request.url);
+export const prerender = false;
+
+export const GET: APIRoute = async ({ request }) => {
+  const url = new URL(request.url);
   const state = url.searchParams.get('state');
   const city = url.searchParams.get('city');
   const zip = url.searchParams.get('zip');
@@ -20,4 +23,4 @@ export async function onRequestGet(context) {
   return new Response(JSON.stringify(address), {
     headers: { 'Content-Type': 'application/json', 'Cache-Control': 'no-cache' },
   });
-}
+};
