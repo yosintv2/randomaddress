@@ -1,0 +1,2 @@
+# Cloudflare Pages: static site with trailingSlash directories
+# No SPA fallback needed — each route has its own index.html
