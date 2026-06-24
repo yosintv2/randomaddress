@@ -18,6 +18,7 @@ const dataJson = JSON.stringify({ firstNames, lastNames, streets, states, cities
 
 const script = `(function(){
 var DATA = ${dataJson};
+window.__AD = DATA;
 function pick(a){return a[Math.floor(Math.random()*a.length)]}
 var AC={CA:"213",TX:"713",NY:"212",FL:"305",IL:"312",PA:"215",OH:"614",GA:"404",NC:"704",MI:"313",NJ:"201",VA:"703",WA:"206",AZ:"602",MA:"617",TN:"615",IN:"317",MO:"314",MD:"301",WI:"414",CO:"303",MN:"612",SC:"803",AL:"205",LA:"504",KY:"502",OR:"503",OK:"405",CT:"203",IA:"515",MS:"601",AR:"501",KS:"913",UT:"801",NV:"702",NM:"505",WV:"304",NE:"402",ID:"208",HI:"808",ME:"207",NH:"603",RI:"401",MT:"406",DE:"302",SD:"605",ND:"701",AK:"907",VT:"802",WY:"307"};
 function gp(a){var c=AC[a]||"555";return "("+c+")"+String(Math.floor(Math.random()*900)+100)+"-"+String(Math.floor(Math.random()*9000)+1000)}
@@ -31,10 +32,9 @@ document.addEventListener("click",function(e){var b=e.target.closest("[data-rege
 document.addEventListener("click",function(e){var b=e.target.closest("[data-copy]");if(!b)return;var t=b.getAttribute("data-address")||"";navigator.clipboard.writeText(t).then(function(){var d=document.getElementById("toast");if(!d){d=document.createElement("div");d.id="toast";d.className="fixed bottom-24 left-1/2 -translate-x-1/2 z-50 bg-gray-900 text-white text-sm font-medium px-5 py-3 rounded-xl shadow-2xl animate-slide-up";document.body.appendChild(d)}d.textContent="Copied to clipboard!";setTimeout(function(){d.style.animation="toastOut 0.3s ease-out forwards";setTimeout(function(){if(d&&d.parentNode)d.parentNode.removeChild(d)},300)},2000)})});
 })();`;
 
-const attrs = `data-address-card${state ? ` data-state="${state}"` : ''}${city ? ` data-city="${city}"` : ''}${zip ? ` data-zip="${zip}"` : ''}`;
 ---
 
-<div class="glass-card rounded-2xl p-6 sm:p-8 fade-in" {attrs}>
+<div class="glass-card rounded-2xl p-6 sm:p-8 fade-in" data-address-card data-state={state} data-city={city} data-zip={zip}>
   <div class="flex items-center gap-3 mb-6 pb-4 border-b border-gray-100">
     <div class="w-10 h-10 rounded-xl gradient-bg flex items-center justify-center shadow-lg shadow-brand-500/20">
       <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -82,20 +82,20 @@ const attrs = `data-address-card${state ? ` data-state="${state}"` : ''}${city ?
     </div>
   </div>
 
-  <div class="mt-6 pt-4 border-t border-gray-100 flex gap-3">
-    <button data-copy class="flex-1 btn-primary text-sm px-4 py-2.5">
-      <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+  <div class="mt-6 pt-4 border-t border-gray-100 flex flex-col sm:flex-row gap-3">
+    <button data-copy class="flex-1 btn-primary text-sm sm:text-base px-5 py-3 sm:py-2.5 min-h-[48px]">
+      <svg class="w-4 h-4 sm:w-5 sm:h-5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 5H6a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2v-1M8 5a2 2 0 002 2h2a2 2 0 002-2M8 5a2 2 0 012-2h2a2 2 0 012 2m0 0h2a2 2 0 012 2v3m2 4H10m0 0l3-3m-3 3l3 3"/>
       </svg>
-      Copy Address
+      <span class="whitespace-nowrap">Copy Address</span>
     </button>
-    <button data-regenerate class="flex-1 btn-secondary text-sm px-4 py-2.5">
-      <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+    <button data-regenerate class="flex-1 btn-secondary text-sm sm:text-base px-5 py-3 sm:py-2.5 min-h-[48px]">
+      <svg class="w-4 h-4 sm:w-5 sm:h-5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/>
       </svg>
-      Generate Again
+      <span class="whitespace-nowrap">Generate Again</span>
     </button>
   </div>
 </div>
 
-<script is:inline set:html={script} />
+<script is:inline set:html={script}></script>

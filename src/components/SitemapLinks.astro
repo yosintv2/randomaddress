@@ -26,12 +26,14 @@ const uniqueZipcodes = zipcodes.filter(z => {
   </div>
 
   <div class="space-y-12">
-    <!-- States -->
+    <!-- States (all 50 - small footprint) -->
     <div>
-      <h3 class="text-xl font-bold text-gray-900 mb-6 flex items-center gap-2">
-        <span class="w-1.5 h-6 rounded-full bg-brand-500"></span>
-        All 50 US States
-      </h3>
+      <div class="flex items-center justify-between mb-6">
+        <h3 class="text-xl font-bold text-gray-900 flex items-center gap-2">
+          <span class="w-1.5 h-6 rounded-full bg-brand-500"></span>
+          All 50 US States
+        </h3>
+      </div>
       <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-2">
         {states.map(s => (
           <a href={`/states/${slugify(s.name)}/`} class="glass-card rounded-lg px-3 py-2 text-sm text-gray-600 hover:text-brand-600 hover:shadow-md transition-all truncate">
@@ -41,33 +43,45 @@ const uniqueZipcodes = zipcodes.filter(z => {
       </div>
     </div>
 
-    <!-- Cities -->
+    <!-- Cities (first 20, then View All) -->
     <div>
-      <h3 class="text-xl font-bold text-gray-900 mb-6 flex items-center gap-2">
-        <span class="w-1.5 h-6 rounded-full bg-accent-500"></span>
-        All US Cities ({uniqueCities.length})
-      </h3>
+      <div class="flex items-center justify-between mb-6">
+        <h3 class="text-xl font-bold text-gray-900 flex items-center gap-2">
+          <span class="w-1.5 h-6 rounded-full bg-accent-500"></span>
+          US Cities ({uniqueCities.length})
+        </h3>
+        <a href="/random-city-generator/" class="text-sm font-medium text-brand-600 hover:text-brand-700 transition-colors">View All Cities →</a>
+      </div>
       <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-2">
-        {uniqueCities.map(c => (
+        {uniqueCities.slice(0, 20).map(c => (
           <a href={`/cities/${slugify(c.city)}/`} class="glass-card rounded-lg px-3 py-2 text-sm text-gray-600 hover:text-brand-600 hover:shadow-md transition-all truncate">
             {c.city}, {c.state}
           </a>
         ))}
       </div>
+      <div class="text-center mt-4">
+        <a href="/random-city-generator/" class="text-sm font-medium text-brand-600 hover:text-brand-700 transition-colors">Browse all {uniqueCities.length} US cities →</a>
+      </div>
     </div>
 
-    <!-- ZIP Codes -->
+    <!-- ZIP Codes (first 20, then View All) -->
     <div>
-      <h3 class="text-xl font-bold text-gray-900 mb-6 flex items-center gap-2">
-        <span class="w-1.5 h-6 rounded-full bg-emerald-500"></span>
-        All US ZIP Codes ({uniqueZipcodes.length})
-      </h3>
+      <div class="flex items-center justify-between mb-6">
+        <h3 class="text-xl font-bold text-gray-900 flex items-center gap-2">
+          <span class="w-1.5 h-6 rounded-full bg-emerald-500"></span>
+          US ZIP Codes ({uniqueZipcodes.length})
+        </h3>
+        <a href="/zip-codes/" class="text-sm font-medium text-brand-600 hover:text-brand-700 transition-colors">View All ZIP Codes →</a>
+      </div>
       <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-2">
-        {uniqueZipcodes.map(z => (
+        {uniqueZipcodes.slice(0, 20).map(z => (
           <a href={`/zip-codes/${z.zip}/`} class="glass-card rounded-lg px-3 py-2 text-sm text-gray-600 hover:text-brand-600 hover:shadow-md transition-all truncate">
             {z.zip} – {z.city}, {z.state}
           </a>
         ))}
+      </div>
+      <div class="text-center mt-4">
+        <a href="/zip-codes/" class="text-sm font-medium text-brand-600 hover:text-brand-700 transition-colors">Browse all {uniqueZipcodes.length} US ZIP codes →</a>
       </div>
     </div>
   </div>
