@@ -1,0 +1,22 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import { buildTitle } from '../../lib/seo';
+---
+
+<Layout title={buildTitle('About Random US Address Generator')}>
+  <article class="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 py-12 prose prose-gray">
+    <h1>About Random US Address Generator</h1>
+    <p>RandomUSAddress.com is a free utility website that generates random US addresses, test addresses, random people, names, cities, ZIP codes, phone numbers, and related testing data.</p>
+    <p>Our goal is to provide developers, testers, and educators with a reliable source of realistic US address data for testing and development purposes.</p>
+    <h2>Why Use Our Generator?</h2>
+    <ul>
+      <li>100% Free - No registration required</li>
+      <li>Realistic data from all 50 US states</li>
+      <li>Includes names, addresses, phone numbers, and more</li>
+      <li>Mobile-friendly interface</li>
+      <li>Regularly updated datasets</li>
+    </ul>
+    <h2>Disclaimer</h2>
+    <p>All addresses generated on this website are entirely fictional and randomly generated. Any resemblance to real addresses is purely coincidental. These addresses should not be used for shipping, legal documents, or any official purposes.</p>
+  </article>
+</Layout>

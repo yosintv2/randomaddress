@@ -1,0 +1,23 @@
+---
+import Layout from '../layouts/Layout.astro';
+import GeneratorTool from '../components/GeneratorTool.astro';
+import { generateUsername } from '../lib/generator';
+import { buildTitle } from '../lib/seo';
+
+const usernames = Array.from({ length: 10 }, () => generateUsername());
+---
+
+<Layout title={buildTitle('Username Generator - Random Usernames')}>
+  <GeneratorTool
+    title="Username Generator"
+    description="Generate random usernames for testing, gaming, and online profiles."
+  >
+    <div class="glass-card rounded-2xl p-6 sm:p-8 fade-in">
+      <div class="space-y-2">
+        {usernames.map(u => (
+          <div class="font-mono text-gray-900 bg-gray-50 rounded-xl px-4 py-2.5">{u}</div>
+        ))}
+      </div>
+    </div>
+  </GeneratorTool>
+</Layout>

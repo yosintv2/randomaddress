@@ -1,0 +1,40 @@
+---
+import Layout from '../layouts/Layout.astro';
+import GeneratorTool from '../components/GeneratorTool.astro';
+import { generatePhoneNumber } from '../lib/generator';
+import { buildTitle } from '../lib/seo';
+
+const phones = Array.from({ length: 5 }, () => generatePhoneNumber());
+---
+
+<Layout title={buildTitle('Phone Number Generator - Random US Phone Numbers')}>
+  <GeneratorTool
+    title="Phone Number Generator"
+    description="Generate random US phone numbers with realistic area codes for all 50 states."
+  >
+    <div class="glass-card rounded-2xl p-6 sm:p-8 fade-in">
+      <div class="space-y-3">
+        {phones.map(phone => (
+          <div class="flex items-center justify-between bg-gray-50 rounded-xl px-4 py-3 font-mono text-gray-900 text-lg">
+            <span>{phone}</span>
+            <button data-copy-phone={phone} class="text-gray-400 hover:text-brand-600 transition-colors">
+              <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 5H6a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2v-1M8 5a2 2 0 002 2h2a2 2 0 002-2M8 5a2 2 0 012-2h2a2 2 0 012 2m0 0h2a2 2 0 012 2v3m2 4H10m0 0l3-3m-3 3l3 3"/>
+              </svg>
+            </button>
+          </div>
+        ))}
+      </div>
+    </div>
+    <script>
+      document.querySelectorAll('[data-copy-phone]').forEach(btn => {
+        btn.addEventListener('click', () => {
+          navigator.clipboard.writeText(btn.getAttribute('data-copy-phone') || '');
+          const orig = btn.innerHTML;
+          btn.innerHTML = '<svg class="w-5 h-5 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>';
+          setTimeout(() => { btn.innerHTML = orig; }, 1500);
+        });
+      });
+    </script>
+  </GeneratorTool>
+</Layout>

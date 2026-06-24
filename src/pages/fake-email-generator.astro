@@ -1,0 +1,23 @@
+---
+import Layout from '../layouts/Layout.astro';
+import GeneratorTool from '../components/GeneratorTool.astro';
+import { generateEmail } from '../lib/generator';
+import { buildTitle } from '../lib/seo';
+
+const emails = Array.from({ length: 10 }, () => generateEmail());
+---
+
+<Layout title={buildTitle('Email Generator - Random Email Addresses')}>
+  <GeneratorTool
+    title="Email Generator"
+    description="Generate random email addresses for testing and development purposes."
+  >
+    <div class="glass-card rounded-2xl p-6 sm:p-8 fade-in">
+      <div class="space-y-2">
+        {emails.map(email => (
+          <div class="font-mono text-sm text-gray-900 bg-gray-50 rounded-xl px-4 py-2.5">{email}</div>
+        ))}
+      </div>
+    </div>
+  </GeneratorTool>
+</Layout>

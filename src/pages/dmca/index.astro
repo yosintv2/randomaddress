@@ -1,0 +1,19 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import { buildTitle } from '../../lib/seo';
+---
+
+<Layout title={buildTitle('DMCA')}>
+  <article class="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 py-12 prose prose-gray">
+    <h1>DMCA Notice</h1>
+    <p>RandomUSAddress.com respects the intellectual property rights of others. If you believe that any content on this website infringes your copyright, please contact us.</p>
+    <p>Send DMCA notices to: <strong>dmca@randomusaddress.com</strong></p>
+    <p>Please include:</p>
+    <ul>
+      <li>Identification of the copyrighted work claimed to be infringed</li>
+      <li>Identification of the material that is claimed to be infringing</li>
+      <li>Your contact information</li>
+      <li>A statement of good faith belief</li>
+    </ul>
+  </article>
+</Layout>

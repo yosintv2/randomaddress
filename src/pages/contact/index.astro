@@ -1,0 +1,13 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import { buildTitle } from '../../lib/seo';
+---
+
+<Layout title={buildTitle('Contact Us')}>
+  <article class="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 py-12 prose prose-gray">
+    <h1>Contact Us</h1>
+    <p>Have a question, suggestion, or feedback? We'd love to hear from you.</p>
+    <p>Please send your inquiries to: <strong>contact@randomusaddress.com</strong></p>
+    <p>We typically respond within 24-48 hours.</p>
+  </article>
+</Layout>

@@ -1,0 +1,26 @@
+---
+import Layout from '../layouts/Layout.astro';
+import GeneratorTool from '../components/GeneratorTool.astro';
+import { generatePerson } from '../lib/generator';
+import { buildTitle } from '../lib/seo';
+
+const people = Array.from({ length: 10 }, () => generatePerson());
+---
+
+<Layout title={buildTitle('Name Generator - Random Names')}>
+  <GeneratorTool
+    title="Name Generator"
+    description="Generate random first and last names for US residents. Perfect for testing and development."
+  >
+    <div class="glass-card rounded-2xl p-6 sm:p-8 fade-in">
+      <div class="space-y-2">
+        {people.map(p => (
+          <div class="flex items-center justify-between bg-gray-50 rounded-xl px-4 py-2.5">
+            <span class="font-medium text-gray-900">{p.name}</span>
+            <span class="text-xs text-gray-400 bg-white px-2 py-1 rounded">{p.gender}</span>
+          </div>
+        ))}
+      </div>
+    </div>
+  </GeneratorTool>
+</Layout>

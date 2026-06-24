@@ -1,0 +1,21 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import { buildTitle } from '../../lib/seo';
+---
+
+<Layout title={buildTitle('Privacy Policy')}>
+  <article class="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 py-12 prose prose-gray">
+    <h1>Privacy Policy</h1>
+    <p>Last updated: January 2025</p>
+    <h2>Information We Collect</h2>
+    <p>RandomUSAddress.com does not collect any personal information from its users. We do not require registration or account creation.</p>
+    <h2>Analytics</h2>
+    <p>We use Cloudflare Analytics to collect anonymized usage data such as page views and visitor counts. This data cannot be used to identify individual users.</p>
+    <h2>Cookies</h2>
+    <p>We use minimal cookies necessary for the functioning of the website and Google AdSense. You can control cookie settings through your browser.</p>
+    <h2>Third-Party Services</h2>
+    <p>We use Google AdSense to display advertisements. Google may use cookies to serve relevant ads. Please refer to Google's privacy policy for more information.</p>
+    <h2>Contact</h2>
+    <p>If you have any questions about this privacy policy, please contact us at contact@randomusaddress.com.</p>
+  </article>
+</Layout>

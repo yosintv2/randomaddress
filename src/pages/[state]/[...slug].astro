@@ -1,0 +1,74 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import AddressCard from '../../components/AddressCard.astro';
+import { generateAddressForCity, generateAddressForZip, getCities, getStates, getZipcodes } from '../../lib/generator';
+import { buildTitle, slugify } from '../../lib/seo';
+
+export function getStaticPaths() {
+  const paths: { params: { state: string; slug: string }; props: { type: 'city' | 'zip'; cityName?: string; stateName?: string; zipData?: { zip: string; city: string; state: string } } }[] = [];
+  const seenCities = new Set<string>();
+
+  for (const c of getCities()) {
+    const stateSlug = slugify(c.state);
+    const citySlug = slugify(c.city);
+    const key = `${stateSlug}/${citySlug}`;
+    if (seenCities.has(key)) continue;
+    seenCities.add(key);
+    paths.push({
+      params: { state: stateSlug, slug: citySlug },
+      props: { type: 'city' as const, cityName: c.city, stateName: c.state },
+    });
+  }
+
+  for (const z of getZipcodes()) {
+    const stateSlug = slugify(z.state);
+    paths.push({
+      params: { state: stateSlug, slug: z.zip },
+      props: { type: 'zip' as const, zipData: z },
+    });
+  }
+
+  return paths;
+}
+
+const { type, cityName, stateName, zipData } = Astro.props;
+
+let address;
+let title: string;
+let description: string;
+let heading: string;
+
+if (type === 'city' && cityName && stateName) {
+  address = generateAddressForCity(cityName);
+  title = buildTitle(`${cityName}, ${stateName} Address Generator - Random ${cityName} Addresses`);
+  description = `Generate random addresses for ${cityName}, ${stateName}. Free random address generator with ZIP codes and phone numbers.`;
+  heading = `${cityName}, ${stateName} Address Generator`;
+} else if (type === 'zip' && zipData) {
+  address = generateAddressForZip(zipData.zip);
+  title = buildTitle(`Address ${zipData.zip}, ${zipData.state} - Random ${zipData.zip} Address`);
+  description = `Generate random addresses for ZIP code ${zipData.zip} in ${zipData.state}. Free random address generator.`;
+  heading = `Address ${zipData.zip}, ${zipData.state}`;
+} else {
+  address = generateAddressForCity('New York');
+  title = buildTitle('Address Generator');
+  description = 'Generate random US addresses.';
+  heading = 'Address Generator';
+}
+---
+
+<Layout title={title} description={description}>
+  <section class="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+    <div class="text-center mb-8">
+      <h1 class="text-3xl font-bold text-gray-900 mb-3">{heading}</h1>
+      <p class="text-gray-600">{description}</p>
+    </div>
+
+    <AddressCard {...address} />
+
+    <div class="mt-8 text-center">
+      <a href={Astro.url.pathname} class="inline-block bg-blue-600 text-white px-6 py-3 rounded-lg font-medium hover:bg-blue-700 transition">
+        Generate Again
+      </a>
+    </div>
+  </section>
+</Layout>

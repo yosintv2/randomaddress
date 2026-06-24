@@ -1,0 +1,22 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import { buildTitle } from '../../lib/seo';
+import { articles } from '../../lib/blog';
+
+export function getStaticPaths() {
+  return articles.map(a => ({
+    params: { slug: a.slug },
+    props: { article: a },
+  }));
+}
+
+const { article } = Astro.props;
+---
+
+<Layout title={buildTitle(article.title)}>
+  <article class="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 py-12 prose prose-gray">
+    <time class="text-sm text-gray-500">{article.date}</time>
+    <h1>{article.title}</h1>
+    <p>{article.content}</p>
+  </article>
+</Layout>

@@ -1,0 +1,23 @@
+---
+import Layout from '../layouts/Layout.astro';
+import GeneratorTool from '../components/GeneratorTool.astro';
+import { generateCompanyName } from '../lib/generator';
+import { buildTitle } from '../lib/seo';
+
+const companies = Array.from({ length: 10 }, () => generateCompanyName());
+---
+
+<Layout title={buildTitle('Company Name Generator - Random Company Names')}>
+  <GeneratorTool
+    title="Company Name Generator"
+    description="Generate random company and business names for brainstorming and testing."
+  >
+    <div class="glass-card rounded-2xl p-6 sm:p-8 fade-in">
+      <div class="space-y-2">
+        {companies.map(c => (
+          <div class="text-lg font-semibold text-gray-900 bg-gray-50 rounded-xl px-4 py-3">{c}</div>
+        ))}
+      </div>
+    </div>
+  </GeneratorTool>
+</Layout>

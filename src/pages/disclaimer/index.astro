@@ -1,0 +1,21 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import { buildTitle } from '../../lib/seo';
+---
+
+<Layout title={buildTitle('Disclaimer')}>
+  <article class="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 py-12 prose prose-gray">
+    <h1>Disclaimer</h1>
+    <p>Last updated: January 2025</p>
+    <p>All addresses, names, phone numbers, and other data generated on RandomUSAddress.com are entirely fictional and randomly generated.</p>
+    <p>Any resemblance to real persons, addresses, or locations is purely coincidental.</p>
+    <p>This website is for testing, development, and educational purposes only. Do not use generated data for:</p>
+    <ul>
+      <li>Shipping or mailing</li>
+      <li>Legal documents or contracts</li>
+      <li>Identity verification</li>
+      <li>Financial transactions</li>
+    </ul>
+    <p>We make no representations or warranties of any kind regarding the accuracy or suitability of the generated data.</p>
+  </article>
+</Layout>

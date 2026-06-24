@@ -1,0 +1,18 @@
+---
+import Layout from '../layouts/Layout.astro';
+import GeneratorTool from '../components/GeneratorTool.astro';
+import AddressCard from '../components/AddressCard.astro';
+import { generateAddress } from '../lib/generator';
+import { buildTitle } from '../lib/seo';
+
+const address = generateAddress();
+---
+
+<Layout title={buildTitle('US Address Generator - Random US Address')}>
+  <GeneratorTool
+    title="US Address Generator"
+    description="Generate random US addresses with complete details. Free address generator for testing purposes."
+  >
+    <AddressCard {...address} />
+  </GeneratorTool>
+</Layout>

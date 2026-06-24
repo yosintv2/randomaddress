@@ -1,0 +1,37 @@
+---
+import Layout from '../layouts/Layout.astro';
+import GeneratorTool from '../components/GeneratorTool.astro';
+import { generatePerson } from '../lib/generator';
+import { buildTitle } from '../lib/seo';
+
+const person = generatePerson();
+---
+
+<Layout title={buildTitle('Random Person Generator - Generate Random People')}>
+  <GeneratorTool
+    title="Random Person Generator"
+    description="Generate random people with complete details including name, age, address, phone number, email, and username."
+  >
+    <div class="glass-card rounded-2xl p-6 sm:p-8 fade-in">
+      <div class="grid grid-cols-2 gap-x-6 gap-y-4 text-sm">
+        {[
+          { label: 'Name', value: person.name, span: false },
+          { label: 'Gender', value: person.gender, span: false },
+          { label: 'Age', value: String(person.age), span: false },
+          { label: 'Username', value: person.username, span: false },
+          { label: 'Street', value: person.street, span: true },
+          { label: 'City', value: person.city, span: false },
+          { label: 'State', value: person.state, span: false },
+          { label: 'ZIP', value: person.zip, span: false },
+          { label: 'Phone', value: person.phone, span: false },
+          { label: 'Email', value: person.email, span: true },
+        ].map(f => (
+          <div class={f.span ? 'col-span-2' : ''}>
+            <span class="text-xs font-medium uppercase tracking-wider text-gray-400">{f.label}</span>
+            <p class="mt-1 font-semibold text-gray-900">{f.value}</p>
+          </div>
+        ))}
+      </div>
+    </div>
+  </GeneratorTool>
+</Layout>

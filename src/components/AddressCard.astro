@@ -1,0 +1,90 @@
+---
+export interface Props {
+  name: string;
+  gender: string;
+  street: string;
+  city: string;
+  state: string;
+  zip: string;
+  phone: string;
+}
+
+const { name, gender, street, city, state, zip, phone } = Astro.props;
+const fullAddress = `${name}, ${street}, ${city}, ${state} ${zip}`;
+---
+
+<div class="glass-card rounded-2xl p-6 sm:p-8 fade-in">
+  <div class="flex items-center gap-3 mb-6 pb-4 border-b border-gray-100">
+    <div class="w-10 h-10 rounded-xl gradient-bg flex items-center justify-center shadow-lg shadow-brand-500/20">
+      <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"/>
+      </svg>
+    </div>
+    <div>
+      <h3 class="font-semibold text-gray-900">Generated Address</h3>
+      <p class="text-xs text-gray-400">Click copy to use</p>
+    </div>
+  </div>
+
+  <div class="grid grid-cols-2 gap-x-6 gap-y-4 text-sm">
+    <div>
+      <span class="text-xs font-medium uppercase tracking-wider text-gray-400">Name</span>
+      <p class="mt-1 font-semibold text-gray-900">{name}</p>
+    </div>
+    <div>
+      <span class="text-xs font-medium uppercase tracking-wider text-gray-400">Gender</span>
+      <p class="mt-1 font-semibold text-gray-900">{gender}</p>
+    </div>
+    <div class="col-span-2">
+      <span class="text-xs font-medium uppercase tracking-wider text-gray-400">Street Address</span>
+      <p class="mt-1 font-semibold text-gray-900">{street}</p>
+    </div>
+    <div>
+      <span class="text-xs font-medium uppercase tracking-wider text-gray-400">City</span>
+      <p class="mt-1 font-semibold text-gray-900">{city}</p>
+    </div>
+    <div>
+      <span class="text-xs font-medium uppercase tracking-wider text-gray-400">State</span>
+      <p class="mt-1 font-semibold text-gray-900">{state}</p>
+    </div>
+    <div>
+      <span class="text-xs font-medium uppercase tracking-wider text-gray-400">ZIP Code</span>
+      <p class="mt-1 font-mono font-semibold text-gray-900">{zip}</p>
+    </div>
+    <div>
+      <span class="text-xs font-medium uppercase tracking-wider text-gray-400">Phone</span>
+      <p class="mt-1 font-mono font-semibold text-gray-900">{phone}</p>
+    </div>
+  </div>
+
+  <div class="mt-6 pt-4 border-t border-gray-100 flex gap-3">
+    <button data-copy data-address={fullAddress} class="flex-1 btn-primary text-sm px-4 py-2.5">
+      <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 5H6a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2v-1M8 5a2 2 0 002 2h2a2 2 0 002-2M8 5a2 2 0 012-2h2a2 2 0 012 2m0 0h2a2 2 0 012 2v3m2 4H10m0 0l3-3m-3 3l3 3"/>
+      </svg>
+      Copy Address
+    </button>
+    <button data-regenerate class="flex-1 btn-secondary text-sm px-4 py-2.5">
+      <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/>
+      </svg>
+      Generate Again
+    </button>
+  </div>
+</div>
+
+<script>
+  document.querySelectorAll('[data-copy]').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const text = btn.getAttribute('data-address') || '';
+      navigator.clipboard.writeText(text).then(() => {
+        const orig = btn.innerHTML;
+        btn.innerHTML = '<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg> Copied!';
+        setTimeout(() => { btn.innerHTML = orig; }, 2000);
+      });
+    });
+  });
+  document.querySelectorAll('[data-regenerate]').forEach(btn => {
+    btn.addEventListener('click', () => { window.location.reload(); });
+  });
+</script>
