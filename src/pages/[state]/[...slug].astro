@@ -6,6 +6,34 @@ import FAQs from '../../components/FAQs.astro';
 import { getCities, getStates, getZipcodes } from '../../lib/generator';
 import { buildTitle, slugify, SITE_URL, getFAQSchema, getStateFAQs, getCityFAQs, getZipFAQs, getStateContent, getCityContent, getZipContent } from '../../lib/seo';
 
+export function getStaticPaths() {
+  const allStates = getStates();
+  const allCities = getCities();
+  const allZips = getZipcodes();
+  const seen = new Set<string>();
+  const paths = [];
+
+  for (const s of allStates) {
+    const stateSlug = slugify(s.name);
+    paths.push({ params: { state: stateSlug } });
+    const stateCities = allCities.filter(c => c.state === s.name);
+    for (const c of stateCities) {
+      const key = `${stateSlug}/${slugify(c.city)}`;
+      if (seen.has(key)) continue;
+      seen.add(key);
+      paths.push({ params: { state: stateSlug, slug: slugify(c.city) } });
+    }
+    const stateZips = allZips.filter(z => z.state === s.name);
+    for (const z of stateZips) {
+      const key = `${stateSlug}/${z.zip}`;
+      if (seen.has(key)) continue;
+      seen.add(key);
+      paths.push({ params: { state: stateSlug, slug: z.zip } });
+    }
+  }
+  return paths;
+}
+
 const { state: stateSlug, slug } = Astro.params;
 
 const allStates = getStates();

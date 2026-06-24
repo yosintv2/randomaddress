@@ -7,7 +7,7 @@ const canonical = `${SITE_URL}/terms/`;
 ---
 
 <Layout title={buildTitle('Terms of Service')} description={description} canonical={canonical}>
-  <script slot="schema" type="application/ld+json" set:html={JSON.stringify(getWebPageSchema(title, description, canonical))} />
+  <script slot="schema" type="application/ld+json" set:html={JSON.stringify(getWebPageSchema(buildTitle('Terms of Service'), description, canonical))} />
   <Breadcrumbs items={[
     { name: 'Home', url: '/' },
     { name: 'Terms of Service', url: '/terms/' },

@@ -6,8 +6,15 @@ import FAQs from '../../components/FAQs.astro';
 import { getZipcodes } from '../../lib/generator';
 import { buildTitle, slugify, SITE_URL, getFAQSchema, getZipFAQs, getZipContent } from '../../lib/seo';
 
+export function getStaticPaths() {
+  return getZipcodes().map(z => ({
+    params: { zip: z.zip },
+    props: { zipData: z },
+  }));
+}
+
 const { zip } = Astro.params;
-const zipData = getZipcodes().find(z => z.zip === zip);
+const zipData = Astro.props.zipData;
 
 if (!zipData) {
   Astro.redirect('/404');

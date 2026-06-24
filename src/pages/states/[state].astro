@@ -6,9 +6,15 @@ import FAQs from '../../components/FAQs.astro';
 import { getStates, getCities } from '../../lib/generator';
 import { buildTitle, slugify, SITE_URL, getFAQSchema, getStateFAQs, getStateContent } from '../../lib/seo';
 
+export function getStaticPaths() {
+  return getStates().map(s => ({
+    params: { state: slugify(s.name) },
+    props: { stateData: s },
+  }));
+}
+
 const { state: stateSlug } = Astro.params;
-const allStates = getStates();
-const state = allStates.find(s => slugify(s.name) === stateSlug);
+const state = Astro.props.stateData;
 
 if (!state) {
   Astro.redirect('/404');

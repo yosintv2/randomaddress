@@ -7,7 +7,7 @@ const canonical = `${SITE_URL}/privacy-policy/`;
 ---
 
 <Layout title={buildTitle('Privacy Policy')} description={description} canonical={canonical}>
-  <script slot="schema" type="application/ld+json" set:html={JSON.stringify(getWebPageSchema(title, description, canonical))} />
+  <script slot="schema" type="application/ld+json" set:html={JSON.stringify(getWebPageSchema(buildTitle('Privacy Policy'), description, canonical))} />
   <Breadcrumbs items={[
     { name: 'Home', url: '/' },
     { name: 'Privacy Policy', url: '/privacy-policy/' },

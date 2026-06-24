@@ -6,15 +6,22 @@ import FAQs from '../../components/FAQs.astro';
 import { getCities, getZipcodes } from '../../lib/generator';
 import { buildTitle, slugify, SITE_URL, getFAQSchema, getCityFAQs, getCityContent } from '../../lib/seo';
 
+export function getStaticPaths() {
+  const allCities = getCities();
+  const seen = new Set<string>();
+  return allCities.filter(c => {
+    const key = slugify(c.city);
+    if (seen.has(key)) return false;
+    seen.add(key);
+    return true;
+  }).map(c => ({
+    params: { city: slugify(c.city) },
+    props: { cityData: c },
+  }));
+}
+
 const { city: citySlug } = Astro.params;
-const seen = new Set<string>();
-const uniqueCities = getCities().filter(c => {
-  const key = slugify(c.city);
-  if (seen.has(key)) return false;
-  seen.add(key);
-  return true;
-});
-const cityData = uniqueCities.find(c => slugify(c.city) === citySlug);
+const cityData = Astro.props.cityData;
 
 if (!cityData) {
   Astro.redirect('/404');

@@ -1,8 +1,7 @@
-import type { APIRoute } from 'astro';
-import { generatePerson } from '../../lib/generator';
+import { generatePerson } from '../../src/lib/generator';
 
-export const GET: APIRoute = async () => {
+export async function onRequestGet() {
   return new Response(JSON.stringify(generatePerson()), {
     headers: { 'Content-Type': 'application/json', 'Cache-Control': 'no-cache' },
   });
-};
+}

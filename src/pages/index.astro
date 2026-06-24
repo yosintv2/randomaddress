@@ -10,6 +10,9 @@ import statesData from '../data/states.json';
 const cityCount = new Set(getCities().map(c => c.city)).size;
 const zipCount = getZipcodes().length;
 const stateCount = statesData.length;
+const title = buildTitle('Random US Address Generator - Free Random US Address Generator');
+const description = 'Generate random US addresses instantly with street, city, state, ZIP code, phone number, and email. Free random US address generator for testing.';
+const canonical = SITE_URL;
 const faqs = [
   { question: 'What is a random US address generator?', answer: 'A random US address generator is a free online tool that creates random but realistic US addresses for testing, development, and educational purposes. It generates complete addresses including street names, cities, states, ZIP codes, and phone numbers.' },
   { question: 'Is this free to use?', answer: 'Yes, Random US Address Generator is completely free to use. No registration or account is required.' },
@@ -24,8 +27,8 @@ const faqs = [
 ];
 ---
 
-<Layout title={buildTitle('Random US Address Generator - Free Random US Address Generator')} keywords="random US address generator, free address generator, random address, US address generator, test address generator" canonical={SITE_URL}>
-  <script slot="schema" type="application/ld+json" set:html={JSON.stringify(getWebPageSchema(title, description, canonical || SITE_URL))} />
+<Layout title={title} keywords="random US address generator, free address generator, random address, US address generator, test address generator" canonical={canonical}>
+  <script slot="schema" type="application/ld+json" set:html={JSON.stringify(getWebPageSchema(title, description, canonical))} />
   <script slot="schema" type="application/ld+json" set:html={JSON.stringify(getWebApplicationSchema())} />
   <script slot="schema" type="application/ld+json" set:html={JSON.stringify(getFAQSchema(faqs))} />
   <script slot="schema" type="application/ld+json" set:html={JSON.stringify(getOrganizationSchema())} />
