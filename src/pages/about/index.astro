@@ -1,9 +1,23 @@
 ---
 import Layout from '../../layouts/Layout.astro';
-import { buildTitle } from '../../lib/seo';
+import Breadcrumbs from '../../components/Breadcrumbs.astro';
+import { buildTitle, SITE_URL } from '../../lib/seo';
+const description = 'Learn about Random US Address Generator — a free tool for generating random US addresses, names, phone numbers, and test data for developers and testers.';
+const canonical = `${SITE_URL}/about/`;
 ---
 
-<Layout title={buildTitle('About Random US Address Generator')}>
+<Layout title={buildTitle('About Random US Address Generator')} description={description} canonical={canonical}>
+  <Breadcrumbs items={[
+    { name: 'Home', url: '/' },
+    { name: 'About', url: '/about/' },
+  ]} />
+  <script slot="schema" type="application/ld+json" set:html={JSON.stringify({
+    '@context': 'https://schema.org',
+    '@type': 'AboutPage',
+    name: 'About Random US Address Generator',
+    description,
+    url: canonical,
+  })} />
   <article class="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 py-12 prose prose-gray">
     <h1>About Random US Address Generator</h1>
     <p>RandomUSAddress.com is a free utility website that generates random US addresses, test addresses, random people, names, cities, ZIP codes, phone numbers, and related testing data.</p>

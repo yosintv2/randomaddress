@@ -1,12 +1,19 @@
 ---
 import Layout from '../../layouts/Layout.astro';
-import { buildTitle } from '../../lib/seo';
+import Breadcrumbs from '../../components/Breadcrumbs.astro';
+import { buildTitle, SITE_URL } from '../../lib/seo';
+const description = 'Terms of service for Random US Address Generator. Please read these terms carefully before using our service.';
+const canonical = `${SITE_URL}/terms/`;
 ---
 
-<Layout title={buildTitle('Terms of Service')}>
+<Layout title={buildTitle('Terms of Service')} description={description} canonical={canonical}>
+  <Breadcrumbs items={[
+    { name: 'Home', url: '/' },
+    { name: 'Terms of Service', url: '/terms/' },
+  ]} />
   <article class="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 py-12 prose prose-gray">
     <h1>Terms of Service</h1>
-    <p>Last updated: January 2025</p>
+    <p>Last updated: June 2026</p>
     <h2>Acceptance of Terms</h2>
     <p>By using RandomUSAddress.com, you agree to these terms of service.</p>
     <h2>Use of Service</h2>

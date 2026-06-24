@@ -1,12 +1,19 @@
 ---
 import Layout from '../../layouts/Layout.astro';
-import { buildTitle } from '../../lib/seo';
+import Breadcrumbs from '../../components/Breadcrumbs.astro';
+import { buildTitle, SITE_URL } from '../../lib/seo';
+const description = 'Privacy policy for Random US Address Generator. Learn how we handle your data, analytics, cookies, and third-party services.';
+const canonical = `${SITE_URL}/privacy-policy/`;
 ---
 
-<Layout title={buildTitle('Privacy Policy')}>
+<Layout title={buildTitle('Privacy Policy')} description={description} canonical={canonical}>
+  <Breadcrumbs items={[
+    { name: 'Home', url: '/' },
+    { name: 'Privacy Policy', url: '/privacy-policy/' },
+  ]} />
   <article class="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 py-12 prose prose-gray">
     <h1>Privacy Policy</h1>
-    <p>Last updated: January 2025</p>
+    <p>Last updated: June 2026</p>
     <h2>Information We Collect</h2>
     <p>RandomUSAddress.com does not collect any personal information from its users. We do not require registration or account creation.</p>
     <h2>Analytics</h2>

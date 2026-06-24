@@ -18,7 +18,7 @@ const citySlug = slugify(zipData.city);
 const title = buildTitle(`Random Address ${zipData.zip} - ${zipData.city}, ${zipData.state} Address Generator`);
 const description = `Generate random addresses for ZIP code ${zipData.zip} (${zipData.city}, ${zipData.state}). Free random address generator for ${zipData.zip}.`;
 const keywords = `${zipData.zip} address, random ${zipData.zip} address, ${zipData.city} ${zipData.state} ZIP code, free ${zipData.zip} address generator`;
-const canonical = `${SITE_URL}/zip-codes/${zipData.zip}/`;
+const canonical = `${SITE_URL}/${stateSlug}/${zipData.zip}/`;
 ---
 
 <Layout title={title} description={description} keywords={keywords} canonical={canonical}>
@@ -42,6 +42,6 @@ const canonical = `${SITE_URL}/zip-codes/${zipData.zip}/`;
       <p class="text-lg text-gray-600 max-w-2xl mx-auto">Generate random addresses for {zipData.zip} - {zipData.city}, {zipData.state}.</p>
     </div>
 
-    <AddressCard />
+    <AddressCard zip={zipData.zip} />
   </section>
 </Layout>

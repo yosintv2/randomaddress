@@ -1,13 +1,43 @@
 ---
 import Layout from '../../layouts/Layout.astro';
-import { buildTitle } from '../../lib/seo';
+import Breadcrumbs from '../../components/Breadcrumbs.astro';
+import { buildTitle, SITE_URL } from '../../lib/seo';
+const description = 'Contact Random US Address Generator. Have questions, suggestions, or feedback? We\'d love to hear from you.';
+const canonical = `${SITE_URL}/contact/`;
 ---
 
-<Layout title={buildTitle('Contact Us')}>
-  <article class="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 py-12 prose prose-gray">
-    <h1>Contact Us</h1>
-    <p>Have a question, suggestion, or feedback? We'd love to hear from you.</p>
-    <p>Please send your inquiries to: <strong>contact@randomusaddress.com</strong></p>
-    <p>We typically respond within 24-48 hours.</p>
-  </article>
+<Layout title={buildTitle('Contact Us')} description={description} canonical={canonical}>
+  <Breadcrumbs items={[
+    { name: 'Home', url: '/' },
+    { name: 'Contact', url: '/contact/' },
+  ]} />
+  <script slot="schema" type="application/ld+json" set:html={JSON.stringify({
+    '@context': 'https://schema.org',
+    '@type': 'ContactPage',
+    name: 'Contact Random US Address Generator',
+    description,
+    url: canonical,
+    contactPoint: {
+      '@type': 'ContactPoint',
+      email: 'contact@randomusaddress.com',
+      contactType: 'customer support',
+      url: canonical,
+    },
+  })} />
+  <section class="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+    <div class="text-center mb-12">
+      <h1 class="text-3xl lg:text-4xl font-bold text-gray-900 mb-4">Contact Us</h1>
+      <p class="text-lg text-gray-500 max-w-xl mx-auto">Have a question, suggestion, or feedback? We'd love to hear from you.</p>
+    </div>
+    <div class="glass-card rounded-2xl p-8 max-w-lg mx-auto text-center">
+      <div class="w-16 h-16 rounded-2xl gradient-bg flex items-center justify-center mx-auto mb-6">
+        <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/>
+        </svg>
+      </div>
+      <p class="text-lg text-gray-900 font-medium mb-2">Email us at</p>
+      <a href="mailto:contact@randomusaddress.com" class="text-xl font-bold gradient-text hover:opacity-80 transition-opacity">contact@randomusaddress.com</a>
+      <p class="text-sm text-gray-400 mt-4">We typically respond within 24-48 hours.</p>
+    </div>
+  </section>
 </Layout>

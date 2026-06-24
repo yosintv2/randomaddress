@@ -1,7 +1,7 @@
 ---
 import Layout from '../../layouts/Layout.astro';
 import Breadcrumbs from '../../components/Breadcrumbs.astro';
-import { buildTitle, SITE_URL } from '../../lib/seo';
+import { buildTitle, SITE_NAME, SITE_URL } from '../../lib/seo';
 import { articles } from '../../lib/blog';
 
 export function getStaticPaths() {
@@ -11,23 +11,57 @@ export function getStaticPaths() {
   }));
 }
 
+function stripHtml(html: string): string {
+  return html.replace(/<[^>]+>/g, '').replace(/\s+/g, ' ').trim();
+}
+
 const { article } = Astro.props;
-const paragraphs = article.content.split('\n\n').filter(Boolean);
 const title = buildTitle(article.title);
+const plainText = stripHtml(article.content);
+const description = plainText.length > 160 ? plainText.slice(0, 157) + '...' : plainText;
 const canonical = `${SITE_URL}/blog/${article.slug}/`;
+
+function getRelatedArticles(currentSlug: string, count: number = 3) {
+  return articles.filter(a => a.slug !== currentSlug).slice(0, count);
+}
+
+const relatedArticles = getRelatedArticles(article.slug);
 ---
 
-<Layout title={title} canonical={canonical}>
+<Layout title={title} description={description} canonical={canonical}>
   <Breadcrumbs items={[
     { name: 'Home', url: '/' },
     { name: 'Blog', url: '/blog/' },
     { name: article.title, url: `/blog/${article.slug}/` },
   ]} />
+  <script slot="schema" type="application/ld+json" set:html={JSON.stringify({
+    '@context': 'https://schema.org',
+    '@type': 'Article',
+    headline: article.title,
+    description,
+    datePublished: article.date,
+    author: { '@type': 'Organization', name: SITE_NAME },
+    publisher: { '@type': 'Organization', name: SITE_NAME },
+    mainEntityOfPage: { '@type': 'WebPage', '@id': canonical },
+  })} />
   <article class="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
     <time class="text-sm text-gray-500">{article.date}</time>
     <h1 class="text-3xl font-bold text-gray-900 mt-2 mb-6">{article.title}</h1>
-    <div class="prose prose-gray max-w-none">
-      {paragraphs.map(p => <p class="mb-4 leading-relaxed">{p}</p>)}
-    </div>
+    <div class="prose prose-gray max-w-none" set:html={article.content} />
+
+    {relatedArticles.length > 0 && (
+      <section class="mt-16 pt-8 border-t border-gray-200">
+        <h2 class="text-2xl font-bold text-gray-900 mb-6">Related Articles</h2>
+        <div class="grid sm:grid-cols-2 gap-4">
+          {relatedArticles.map(a => (
+            <a href={`/blog/${a.slug}/`} class="glass-card rounded-xl p-5 card-hover">
+              <time class="text-xs text-gray-400 uppercase tracking-wider font-medium">{a.date}</time>
+              <h3 class="font-semibold text-gray-900 mt-1">{a.title}</h3>
+              <p class="text-sm text-gray-500 mt-1 line-clamp-2">{stripHtml(a.content).slice(0, 100)}</p>
+            </a>
+          ))}
+        </div>
+      </section>
+    )}
   </article>
 </Layout>

@@ -24,7 +24,7 @@ const {
 ---
 
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" data-theme>
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -43,12 +43,20 @@ const {
     <meta name="twitter:description" content={description} />
     <meta name="twitter:image" content={`${SITE_URL}${ogImage}`} />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="mask-icon" href="/favicon.svg" color="#2563eb" />
+    <meta name="theme-color" content="#2563eb" media="(prefers-color-scheme: light)" />
+    <meta name="theme-color" content="#0f172a" media="(prefers-color-scheme: dark)" />
     <slot name="schema" />
   </head>
   <body class="min-h-screen text-gray-900 antialiased">
+    <a href="#main-content" class="skip-to-content">Skip to main content</a>
+
+    <!-- Dark Mode Init -->
+    <script is:inline>(function(){try{var t=localStorage.getItem('theme');if(t==='dark'||(!t&&window.matchMedia('(prefers-color-scheme:dark)').matches)){document.documentElement.classList.add('dark')}}catch(e){}})();</script>
+
     <header class="sticky top-0 z-50 glass border-b border-gray-200/50">
       <nav class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
-        <a href="/" class="flex items-center gap-2.5 group">
+        <a href="/" class="flex items-center gap-2.5 group" aria-label="Home">
           <div class="w-9 h-9 rounded-xl gradient-bg flex items-center justify-center shadow-lg shadow-brand-500/20 group-hover:shadow-brand-500/30 transition-shadow">
             <span class="text-white font-bold text-sm">US</span>
           </div>
@@ -61,26 +69,34 @@ const {
           <a href="/blog/" class="btn-ghost">Blog</a>
           <a href="/all-tools/" class="ml-2 btn-primary text-sm px-4 py-2">All Tools</a>
         </div>
-        <button class="md:hidden p-2 rounded-lg hover:bg-gray-100 active:scale-95 transition-transform" aria-label="Menu" data-mobile-menu>
-          <svg class="w-6 h-6 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h11"/>
-          </svg>
-        </button>
+        <div class="flex items-center gap-1">
+          <button id="theme-toggle" class="btn-ghost p-2" aria-label="Toggle dark mode">
+            <svg class="w-5 h-5 dark:hidden" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"/>
+            </svg>
+            <svg class="w-5 h-5 hidden dark:block" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"/>
+            </svg>
+          </button>
+          <button class="md:hidden p-2 rounded-lg hover:bg-gray-100 active:scale-95 transition-transform dark:hover:bg-slate-700" aria-label="Menu" data-mobile-menu>
+            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h11"/>
+            </svg>
+          </button>
+        </div>
       </nav>
-      <!-- Mobile Menu -->
-      <div data-mobile-panel class="md:hidden hidden border-t border-gray-200/50 bg-white/95 backdrop-blur-xl">
+      <div data-mobile-panel class="md:hidden hidden border-t border-gray-200/50 bg-white/95 backdrop-blur-xl dark:bg-slate-900/95 dark:border-slate-700">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 space-y-1">
-          <a href="/random-address-generator/" class="block px-4 py-3 rounded-xl text-sm font-medium text-gray-700 hover:bg-gray-100 active:bg-gray-200 transition-colors" data-mobile-link>Address Generator</a>
-          <a href="/test-address-generator/" class="block px-4 py-3 rounded-xl text-sm font-medium text-gray-700 hover:bg-gray-100 active:bg-gray-200 transition-colors" data-mobile-link>Test Address</a>
-          <a href="/random-person-generator/" class="block px-4 py-3 rounded-xl text-sm font-medium text-gray-700 hover:bg-gray-100 active:bg-gray-200 transition-colors" data-mobile-link>Person Generator</a>
-          <a href="/blog/" class="block px-4 py-3 rounded-xl text-sm font-medium text-gray-700 hover:bg-gray-100 active:bg-gray-200 transition-colors" data-mobile-link>Blog</a>
-          <a href="/all-tools/" class="block px-4 py-3 rounded-xl text-sm font-semibold text-white gradient-bg text-center transition-colors" data-mobile-link>All Tools</a>
+          <a href="/random-address-generator/" class="block px-4 py-3 rounded-xl text-sm font-medium text-gray-700 hover:bg-gray-100 active:bg-gray-200 transition-colors dark:text-gray-300 dark:hover:bg-slate-700" data-mobile-link>Address Generator</a>
+          <a href="/test-address-generator/" class="block px-4 py-3 rounded-xl text-sm font-medium text-gray-700 hover:bg-gray-100 active:bg-gray-200 transition-colors dark:text-gray-300 dark:hover:bg-slate-700" data-mobile-link>Test Address</a>
+          <a href="/random-person-generator/" class="block px-4 py-3 rounded-xl text-sm font-medium text-gray-700 hover:bg-gray-100 active:bg-gray-200 transition-colors dark:text-gray-300 dark:hover:bg-slate-700" data-mobile-link>Person Generator</a>
+          <a href="/blog/" class="block px-4 py-3 rounded-xl text-sm font-medium text-gray-700 hover:bg-gray-100 active:bg-gray-200 transition-colors dark:text-gray-300 dark:hover:bg-slate-700" data-mobile-link>Blog</a>
+          <a href="/all-tools/" class="block px-4 py-3 rounded-xl text-sm font-semibold text-white gradient-bg text-center" data-mobile-link>All Tools</a>
         </div>
       </div>
     </header>
-    <script is:inline>(function(){var b=document.querySelector('[data-mobile-menu]'),p=document.querySelector('[data-mobile-panel]');if(!b||!p)return;b.addEventListener('click',function(){var o=p.classList.contains('hidden');p.classList.toggle('hidden',o?false:true);b.querySelector('svg').innerHTML=o?'<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>':'<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h11"/>'});document.querySelectorAll('[data-mobile-link]').forEach(function(l){l.addEventListener('click',function(){p.classList.add('hidden');b.querySelector('svg').innerHTML='<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h11"/>'})})})();</script>
 
-    <main>
+    <main id="main-content">
       <slot />
     </main>
 
@@ -133,5 +149,28 @@ const {
         </div>
       </div>
     </footer>
+
+    <!-- Cookie Consent -->
+    <div id="cookie-consent" class="fixed bottom-0 left-0 right-0 z-50 hidden animate-slide-up" role="alert" aria-label="Cookie consent">
+      <div class="glass-card rounded-t-2xl max-w-3xl mx-auto p-4 sm:p-6 flex flex-col sm:flex-row items-center gap-4 shadow-2xl">
+        <p class="text-sm text-gray-600 dark:text-gray-300 flex-1">This website uses cookies and similar technologies for analytics and to display ads. By continuing to use this site, you consent to our use of cookies.</p>
+        <div class="flex gap-3 shrink-0">
+          <button id="cookie-accept" class="btn-primary text-sm px-5 py-2">Accept</button>
+          <a href="/privacy-policy/" class="btn-secondary text-sm px-5 py-2">Learn More</a>
+        </div>
+      </div>
+    </div>
+
+    <!-- Global Scripts -->
+    <script is:inline>(function(){
+      // Dark mode toggle
+      var btn=document.getElementById('theme-toggle');
+      if(btn){btn.addEventListener('click',function(){var d=document.documentElement;var isDark=d.classList.toggle('dark');try{localStorage.setItem('theme',isDark?'dark':'light')}catch(e){}})}
+      // Mobile menu
+      var b=document.querySelector('[data-mobile-menu]'),p=document.querySelector('[data-mobile-panel]');
+      if(b&&p){b.addEventListener('click',function(){var o=p.classList.contains('hidden');p.classList.toggle('hidden',o?false:true);b.querySelector('svg').innerHTML=o?'<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>':'<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h11"/>'});document.querySelectorAll('[data-mobile-link]').forEach(function(l){l.addEventListener('click',function(){p.classList.add('hidden');b.querySelector('svg').innerHTML='<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h11"/>'})})}
+      // Cookie consent
+      (function(){try{if(localStorage.getItem('cookie-consent'))return}catch(e){}var c=document.getElementById('cookie-consent');if(!c)return;c.classList.remove('hidden');var a=document.getElementById('cookie-accept');if(a){a.addEventListener('click',function(){try{localStorage.setItem('cookie-consent','accepted')}catch(e){}c.classList.add('hidden')})}})();
+    })();</script>
   </body>
 </html>

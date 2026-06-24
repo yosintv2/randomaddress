@@ -21,7 +21,7 @@ const canonical = `${SITE_URL}/blog/`;
         <a href={`/blog/${a.slug}/`} class="glass-card rounded-2xl p-6 card-hover block">
           <time class="text-xs text-gray-400 uppercase tracking-wider font-medium">{a.date}</time>
           <h2 class="text-lg font-semibold text-gray-900 mt-2 mb-2 leading-snug">{a.title}</h2>
-          <p class="text-sm text-gray-500 line-clamp-3">{a.content.split('\n\n')[0]}</p>
+          <p class="text-sm text-gray-500 line-clamp-3">{a.content.replace(/<[^>]+>/g, '').split('\n\n')[0]}</p>
           <span class="inline-flex items-center gap-1 text-sm text-brand-600 font-medium mt-3">
             Read more
             <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">

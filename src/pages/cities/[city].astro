@@ -24,7 +24,7 @@ const stateSlug = slugify(cityData.state);
 const title = buildTitle(`${cityData.city}, ${cityData.state} Address Generator - Random ${cityData.city} Addresses`);
 const description = `Generate random ${cityData.city}, ${cityData.state} addresses with ZIP codes and phone numbers. Free ${cityData.city} address generator for testing.`;
 const keywords = `${cityData.city} address generator, random ${cityData.city} address, ${cityData.city} ${cityData.state} ZIP codes, free ${cityData.city} test data`;
-const canonical = `${SITE_URL}/cities/${citySlug}/`;
+const canonical = `${SITE_URL}/${stateSlug}/${citySlug}/`;
 ---
 
 <Layout title={title} description={description} keywords={keywords} canonical={canonical}>
@@ -48,6 +48,6 @@ const canonical = `${SITE_URL}/cities/${citySlug}/`;
       <p class="text-lg text-gray-600 max-w-2xl mx-auto">Generate random addresses for {cityData.city}, {cityData.state}. Including streets, ZIP codes, and phone numbers.</p>
     </div>
 
-    <AddressCard />
+    <AddressCard state={cityData.state} city={cityData.city} />
   </section>
 </Layout>

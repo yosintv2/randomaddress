@@ -1,10 +1,17 @@
 ---
 import Layout from '../layouts/Layout.astro';
 import ToolCard from '../components/ToolCard.astro';
-import { buildTitle } from '../lib/seo';
+import Breadcrumbs from '../components/Breadcrumbs.astro';
+import { buildTitle, SITE_URL } from '../lib/seo';
+const description = 'Browse all free random data generator tools including address generator, person generator, phone number generator, name generator, and more.';
+const canonical = `${SITE_URL}/all-tools/`;
 ---
 
-<Layout title={buildTitle('All Tools - Random US Address Generator Tools')}>
+<Layout title={buildTitle('All Tools - Random US Address Generator Tools')} description={description} canonical={canonical}>
+  <Breadcrumbs items={[
+    { name: 'Home', url: '/' },
+    { name: 'All Tools', url: '/all-tools/' },
+  ]} />
   <section class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
     <div class="text-center mb-12 fade-in">
       <h1 class="section-heading gradient-text mb-4">All Generator Tools</h1>
@@ -19,7 +26,7 @@ import { buildTitle } from '../lib/seo';
       <ToolCard href="/name-generator/" title="Name Generator" description="Generate random first and last names." />
       <ToolCard href="/username-generator/" title="Username Generator" description="Generate random usernames." />
       <ToolCard href="/company-name-generator/" title="Company Name Generator" description="Generate random company names." />
-      <ToolCard href="/fake-email-generator/" title="Email Generator" description="Generate random email addresses." />
+      <ToolCard href="/email-generator/" title="Email Generator" description="Generate random email addresses." />
       <ToolCard href="/random-state-generator/" title="Random State Generator" description="Generate addresses from random states." />
       <ToolCard href="/random-city-generator/" title="Random City Generator" description="Generate addresses from random cities." />
       <ToolCard href="/us-address/" title="US Address Generator" description="Generate complete US addresses." />

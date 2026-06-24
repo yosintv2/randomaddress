@@ -90,6 +90,10 @@ if (type === 'city' && cityName && stateName) {
   breadcrumbs = [{ name: 'Home', url: '/' }];
   placeSchema = {};
 }
+
+const cardState = type === 'city' ? stateName : zipData ? zipData.state : '';
+const cardCity = type === 'city' ? cityName : '';
+const cardZip = type === 'zip' ? zipData.zip : '';
 ---
 
 <Layout title={title} description={description} keywords={keywords} canonical={canonical}>
@@ -105,12 +109,6 @@ if (type === 'city' && cityName && stateName) {
       <p class="text-lg text-gray-600 max-w-2xl mx-auto">{description}</p>
     </div>
 
-    <AddressCard />
-
-    <div class="mt-6 text-center">
-      <a href={Astro.url.pathname} class="inline-block bg-blue-600 text-white px-6 py-3 rounded-lg font-medium hover:bg-blue-700 transition">
-        Generate Again
-      </a>
-    </div>
+    <AddressCard state={cardState} city={cardCity} zip={cardZip} />
   </section>
 </Layout>

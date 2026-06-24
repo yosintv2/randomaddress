@@ -41,7 +41,7 @@ const canonical = `${SITE_URL}/states/${stateSlug}/`;
       <p class="text-lg text-gray-600 max-w-2xl mx-auto">Generate random addresses for {state.name} ({state.abbr}). Including cities, ZIP codes, and phone numbers.</p>
     </div>
 
-    <AddressCard />
+    <AddressCard state={state.name} />
 
     {stateCities.length > 0 && (
       <section class="mt-16">

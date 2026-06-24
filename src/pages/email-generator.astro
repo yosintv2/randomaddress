@@ -6,8 +6,8 @@ import { generateEmail } from '../lib/generator';
 import { buildTitle, SITE_URL } from '../lib/seo';
 const title = buildTitle('Email Generator - Random Email Addresses');
 const description = 'Generate random email addresses for testing and development purposes.';
-const keywords = 'fake email generator, random email address, temporary email, disposable email, test email';
-const canonical = `${SITE_URL}/fake-email-generator/`;
+const keywords = 'email generator, random email address, test email, temporary email, disposable email';
+const canonical = `${SITE_URL}/email-generator/`;
 
 const emails = Array.from({ length: 10 }, () => generateEmail());
 ---
@@ -15,7 +15,7 @@ const emails = Array.from({ length: 10 }, () => generateEmail());
 <Layout title={title} description={description} keywords={keywords} canonical={canonical}>
   <Breadcrumbs items={[
     { name: 'Home', url: '/' },
-    { name: 'Email Generator', url: '/fake-email-generator/' },
+    { name: 'Email Generator', url: '/email-generator/' },
   ]} />
   <GeneratorTool
     title="Email Generator"
