@@ -1,7 +1,7 @@
 ---
 import Layout from '../../layouts/Layout.astro';
 import AddressCard from '../../components/AddressCard.astro';
-import { generateAddressForCity, generateAddressForZip, getCities, getStates, getZipcodes } from '../../lib/generator';
+import { getCities, getStates, getZipcodes } from '../../lib/generator';
 import { buildTitle, slugify } from '../../lib/seo';
 
 export function getStaticPaths() {
@@ -33,23 +33,19 @@ export function getStaticPaths() {
 
 const { type, cityName, stateName, zipData } = Astro.props;
 
-let address;
 let title: string;
 let description: string;
 let heading: string;
 
 if (type === 'city' && cityName && stateName) {
-  address = generateAddressForCity(cityName);
   title = buildTitle(`${cityName}, ${stateName} Address Generator - Random ${cityName} Addresses`);
   description = `Generate random addresses for ${cityName}, ${stateName}. Free random address generator with ZIP codes and phone numbers.`;
   heading = `${cityName}, ${stateName} Address Generator`;
 } else if (type === 'zip' && zipData) {
-  address = generateAddressForZip(zipData.zip);
   title = buildTitle(`Address ${zipData.zip}, ${zipData.state} - Random ${zipData.zip} Address`);
   description = `Generate random addresses for ZIP code ${zipData.zip} in ${zipData.state}. Free random address generator.`;
   heading = `Address ${zipData.zip}, ${zipData.state}`;
 } else {
-  address = generateAddressForCity('New York');
   title = buildTitle('Address Generator');
   description = 'Generate random US addresses.';
   heading = 'Address Generator';
@@ -63,7 +59,7 @@ if (type === 'city' && cityName && stateName) {
       <p class="text-gray-600">{description}</p>
     </div>
 
-    <AddressCard {...address} />
+    <AddressCard />
 
     <div class="mt-8 text-center">
       <a href={Astro.url.pathname} class="inline-block bg-blue-600 text-white px-6 py-3 rounded-lg font-medium hover:bg-blue-700 transition">

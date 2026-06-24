@@ -3,10 +3,7 @@ import Layout from '../layouts/Layout.astro';
 import AddressCard from '../components/AddressCard.astro';
 import ToolCard from '../components/ToolCard.astro';
 import FAQs from '../components/FAQs.astro';
-import { generateAddress } from '../lib/generator';
 import { buildTitle, getWebApplicationSchema, getFAQSchema, getOrganizationSchema } from '../lib/seo';
-
-const address = generateAddress();
 const faqs = [
   { question: 'What is a random US address generator?', answer: 'A random US address generator is a free online tool that creates random but realistic US addresses for testing, development, and educational purposes. It generates complete addresses including street names, cities, states, ZIP codes, and phone numbers.' },
   { question: 'Is this free to use?', answer: 'Yes, Random US Address Generator is completely free to use. No registration or account is required.' },
@@ -86,7 +83,7 @@ const faqs = [
       <h2 class="section-heading mb-4">Try It Now</h2>
       <p class="section-sub mx-auto">Click generate to create a random US address with full details.</p>
     </div>
-    <AddressCard {...address} />
+    <AddressCard />
   </section>
 
   <!-- Features -->

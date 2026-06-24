@@ -2,10 +2,7 @@
 import Layout from '../layouts/Layout.astro';
 import GeneratorTool from '../components/GeneratorTool.astro';
 import AddressCard from '../components/AddressCard.astro';
-import { generateAddress } from '../lib/generator';
 import { buildTitle } from '../lib/seo';
-
-const address = generateAddress();
 ---
 
 <Layout title={buildTitle('Random City Generator - Random City Addresses')}>
@@ -13,6 +10,6 @@ const address = generateAddress();
     title="Random City Generator"
     description="Generate random US addresses from random cities across all 50 states."
   >
-    <AddressCard {...address} />
+    <AddressCard />
   </GeneratorTool>
 </Layout>

@@ -1,7 +1,7 @@
 ---
 import Layout from '../../layouts/Layout.astro';
 import AddressCard from '../../components/AddressCard.astro';
-import { generateAddressForState, getStates, getCities } from '../../lib/generator';
+import { getStates } from '../../lib/generator';
 import { buildTitle, slugify } from '../../lib/seo';
 
 export function getStaticPaths() {
@@ -12,7 +12,6 @@ export function getStaticPaths() {
 }
 
 const { state } = Astro.props;
-const address = generateAddressForState(state.name);
 const title = buildTitle(`${state.name} Address Generator - Random ${state.name} Addresses`);
 const description = `Generate random ${state.name} addresses with real cities, ZIP codes, and phone numbers. Free ${state.name} random address generator for testing.`;
 ---
@@ -24,7 +23,7 @@ const description = `Generate random ${state.name} addresses with real cities, Z
       <p class="text-gray-600">Generate random addresses for {state.name} ({state.abbr}). Including cities, ZIP codes, and phone numbers.</p>
     </div>
 
-    <AddressCard {...address} />
+    <AddressCard />
 
     <div class="mt-8 text-center">
       <a href={Astro.url.pathname} class="inline-block bg-blue-600 text-white px-6 py-3 rounded-lg font-medium hover:bg-blue-700 transition">
