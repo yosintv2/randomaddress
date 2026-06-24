@@ -61,13 +61,24 @@ const {
           <a href="/blog/" class="btn-ghost">Blog</a>
           <a href="/all-tools/" class="ml-2 btn-primary text-sm px-4 py-2">All Tools</a>
         </div>
-        <button class="md:hidden p-2 rounded-lg hover:bg-gray-100" aria-label="Menu" data-mobile-menu>
+        <button class="md:hidden p-2 rounded-lg hover:bg-gray-100 active:scale-95 transition-transform" aria-label="Menu" data-mobile-menu>
           <svg class="w-6 h-6 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/>
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h11"/>
           </svg>
         </button>
       </nav>
+      <!-- Mobile Menu -->
+      <div data-mobile-panel class="md:hidden hidden border-t border-gray-200/50 bg-white/95 backdrop-blur-xl">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 space-y-1">
+          <a href="/random-address-generator/" class="block px-4 py-3 rounded-xl text-sm font-medium text-gray-700 hover:bg-gray-100 active:bg-gray-200 transition-colors" data-mobile-link>Address Generator</a>
+          <a href="/test-address-generator/" class="block px-4 py-3 rounded-xl text-sm font-medium text-gray-700 hover:bg-gray-100 active:bg-gray-200 transition-colors" data-mobile-link>Test Address</a>
+          <a href="/random-person-generator/" class="block px-4 py-3 rounded-xl text-sm font-medium text-gray-700 hover:bg-gray-100 active:bg-gray-200 transition-colors" data-mobile-link>Person Generator</a>
+          <a href="/blog/" class="block px-4 py-3 rounded-xl text-sm font-medium text-gray-700 hover:bg-gray-100 active:bg-gray-200 transition-colors" data-mobile-link>Blog</a>
+          <a href="/all-tools/" class="block px-4 py-3 rounded-xl text-sm font-semibold text-white gradient-bg text-center transition-colors" data-mobile-link>All Tools</a>
+        </div>
+      </div>
     </header>
+    <script is:inline>(function(){var b=document.querySelector('[data-mobile-menu]'),p=document.querySelector('[data-mobile-panel]');if(!b||!p)return;b.addEventListener('click',function(){var o=p.classList.contains('hidden');p.classList.toggle('hidden',o?false:true);b.querySelector('svg').innerHTML=o?'<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>':'<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h11"/>'});document.querySelectorAll('[data-mobile-link]').forEach(function(l){l.addEventListener('click',function(){p.classList.add('hidden');b.querySelector('svg').innerHTML='<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h11"/>'})})})();</script>
 
     <main>
       <slot />

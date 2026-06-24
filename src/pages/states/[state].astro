@@ -43,12 +43,6 @@ const canonical = `${SITE_URL}/states/${stateSlug}/`;
 
     <AddressCard />
 
-    <div class="mt-6 text-center">
-      <a href={Astro.url.pathname} class="inline-block bg-blue-600 text-white px-6 py-3 rounded-lg font-medium hover:bg-blue-700 transition">
-        Generate Another {state.name} Address
-      </a>
-    </div>
-
     {stateCities.length > 0 && (
       <section class="mt-16">
         <h2 class="text-2xl font-bold text-gray-900 mb-6 text-center">Cities in {state.name}</h2>
