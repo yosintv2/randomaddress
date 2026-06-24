@@ -1,38 +1,27 @@
 ---
 import Layout from '../layouts/Layout.astro';
 import GeneratorTool from '../components/GeneratorTool.astro';
+import ToolCard from '../components/ToolCard.astro';
+import FAQs from '../components/FAQs.astro';
 import Breadcrumbs from '../components/Breadcrumbs.astro';
-import firstNames from '../data/firstNames.json';
-import lastNames from '../data/lastNames.json';
-import streets from '../data/streets.json';
-import cities from '../data/cities.json';
-import zipcodes from '../data/zipcodes.json';
-import statesData from '../data/states.json';
-import { buildTitle, SITE_URL } from '../lib/seo';
+import { buildTitle, SITE_URL, getFAQSchema, getWebPageSchema } from '../lib/seo';
 const title = buildTitle('Random Person Generator - Generate Random People');
 const description = 'Generate random people with complete details including name, age, address, phone number, email, and username.';
 const keywords = 'random person generator, person profile generator, random identity, test data generator, random profile';
 const canonical = `${SITE_URL}/random-person-generator/`;
-
-const DATA = { firstNames, lastNames, streets, cities, zipcodes, states: statesData };
-const dataJson = JSON.stringify(DATA);
-const script = `(function(){
-var D=${dataJson};
-function p(a){return a[Math.floor(Math.random()*a.length)]}
-function gs(n){var s=D.states.find(function(s){return s.name===n});return s?s.abbr:""}
-var DM=["gmail.com","yahoo.com","outlook.com","hotmail.com","aol.com","icloud.com","protonmail.com"];
-function ge(fn,ln){return fn.toLowerCase()+"."+ln.toLowerCase()+Math.floor(Math.random()*999)+"@"+p(DM)}
-var AC={CA:"213",TX:"713",NY:"212",FL:"305",IL:"312",PA:"215",OH:"614",GA:"404",NC:"704",MI:"313",NJ:"201",VA:"703",WA:"206",AZ:"602",MA:"617",TN:"615",IN:"317",MO:"314",MD:"301",WI:"414",CO:"303",MN:"612",SC:"803",AL:"205",LA:"504",KY:"502",OR:"503",OK:"405",CT:"203",IA:"515",MS:"601",AR:"501",KS:"913",UT:"801",NV:"702",NM:"505",WV:"304",NE:"402",ID:"208",HI:"808",ME:"207",NH:"603",RI:"401",MT:"406",DE:"302",SD:"605",ND:"701",AK:"907",VT:"802",WY:"307"};
-function gp(a){var c=AC[a]||"555";return "("+c+")"+String(Math.floor(Math.random()*900)+100)+"-"+String(Math.floor(Math.random()*9000)+1000)}
-function gen(){var fn=p(D.firstNames),ln=p(D.lastNames),g=Math.random()>0.5?"Male":"Female",age=Math.floor(Math.random()*70)+18,sn=String(Math.floor(Math.random()*9999)+1),st=p(D.streets),cd=p(D.cities),zd=p(D.zipcodes),sa=gs(cd.state);return{name:fn+" "+ln,firstName:fn,lastName:ln,gender:g,age:age,street:sn+" "+st,city:cd.city,state:cd.state,zip:zd.zip,phone:gp(sa),email:ge(fn,ln),username:fn.toLowerCase()+ln.toLowerCase()+Math.floor(Math.random()*100)}}
-function rn(a){document.querySelectorAll("[data-pf]").forEach(function(e){e.textContent=a[e.getAttribute("data-pf")]});var b=document.querySelector("[data-copy-person]");if(b){b.setAttribute("data-address",a.name+", "+a.gender+", Age "+a.age+", "+a.street+", "+a.city+", "+a.state+" "+a.zip+", Phone: "+a.phone+", Email: "+a.email+", Username: "+a.username)}}
-document.addEventListener("DOMContentLoaded",function(){rn(gen())});
-document.addEventListener("click",function(e){if(e.target.closest("[data-regenerate]")){rn(gen())}});
-document.addEventListener("click",function(e){var b=e.target.closest("[data-copy-person]");if(!b)return;var t=b.getAttribute("data-address")||"";navigator.clipboard.writeText(t).then(function(){var d=document.getElementById("toast");if(!d){d=document.createElement("div");d.id="toast";d.className="fixed bottom-24 left-1/2 -translate-x-1/2 z-50 bg-gray-900 text-white text-sm font-medium px-5 py-3 rounded-xl shadow-2xl animate-slide-up";document.body.appendChild(d)}d.textContent="Copied to clipboard!";setTimeout(function(){d.style.animation="toastOut 0.3s ease-out forwards";setTimeout(function(){if(d&&d.parentNode)d.parentNode.removeChild(d)},300)},2000)})});
-})();`;
+const faqs = [
+  { question: 'What is a random person generator?', answer: 'A random person generator creates complete fictional profiles with name, age, gender, street address, city, state, ZIP, phone, email, and username for testing and development.' },
+  { question: 'Are these real people?', answer: 'No, all profiles are randomly generated and completely fictional. No real personal data is used.' },
+  { question: 'What information is included?', answer: 'Each profile includes name, gender, age, street address, city, state, ZIP code, phone number, email address, and username.' },
+  { question: 'Can I use these for testing?', answer: 'Yes, these profiles are perfect for testing user registration, populating demo databases, and load testing with realistic data.' },
+  { question: 'Is this tool free?', answer: 'Yes, the random person generator is completely free to use with no registration required.' },
+  { question: 'How is the data generated?', answer: 'Our generator combines random names, addresses, phone numbers, emails, and usernames from realistic datasets to create complete person profiles.' },
+];
 ---
 
 <Layout title={title} description={description} keywords={keywords} canonical={canonical}>
+  <script slot="schema" type="application/ld+json" set:html={JSON.stringify(getWebPageSchema(title, description, canonical))} />
+  <script slot="schema" type="application/ld+json" set:html={JSON.stringify(getFAQSchema(faqs))} />
   <Breadcrumbs items={[
     { name: 'Home', url: '/' },
     { name: 'Random Person Generator', url: '/random-person-generator/' },
@@ -55,7 +44,7 @@ document.addEventListener("click",function(e){var b=e.target.closest("[data-copy
         })}
       </div>
       <div class="mt-6 pt-4 border-t border-gray-100 flex gap-3">
-        <button data-copy-person class="flex-1 btn-primary text-sm px-4 py-2.5">
+        <button data-copy-person class="flex-1 btn-primary text-sm px-4 py-2.5 min-h-[48px]">
           <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 5H6a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2v-1M8 5a2 2 0 002 2h2a2 2 0 002-2M8 5a2 2 0 012-2h2a2 2 0 012 2m0 0h2a2 2 0 012 2v3m2 4H10m0 0l3-3m-3 3l3 3"/>
           </svg>
@@ -64,5 +53,63 @@ document.addEventListener("click",function(e){var b=e.target.closest("[data-copy
       </div>
     </div>
   </GeneratorTool>
-  <script is:inline set:html={script}></script>
+  <script is:inline>
+  (function () {
+    function showToast(msg) {
+      var d = document.getElementById("toast");
+      if (!d) {
+        d = document.createElement("div");
+        d.id = "toast";
+        d.className = "fixed bottom-24 left-1/2 -translate-x-1/2 z-50 bg-gray-900 text-white text-sm font-medium px-5 py-3 rounded-xl shadow-2xl animate-slide-up";
+        document.body.appendChild(d);
+      }
+      d.textContent = msg;
+      setTimeout(function () {
+        d.style.animation = "toastOut 0.3s ease-out forwards";
+        setTimeout(function () { if (d && d.parentNode) d.parentNode.removeChild(d); }, 300);
+      }, 2000);
+    }
+
+    function render() {
+      fetch("/api/person.json").then(function (r) { return r.json(); }).then(function (a) {
+        document.querySelectorAll("[data-pf]").forEach(function (e) {
+          e.textContent = a[e.getAttribute("data-pf")];
+        });
+        var b = document.querySelector("[data-copy-person]");
+        if (b) {
+          b.setAttribute("data-address", a.name + ", " + a.gender + ", Age " + a.age + ", " + a.street + ", " + a.city + ", " + a.state + " " + a.zip + ", Phone: " + a.phone + ", Email: " + a.email + ", Username: " + a.username);
+        }
+      }).catch(function () {});
+    }
+
+    document.addEventListener("DOMContentLoaded", render);
+    document.addEventListener("click", function (e) { if (e.target.closest("[data-regenerate]")) { render(); } });
+    document.addEventListener("click", function (e) {
+      var b = e.target.closest("[data-copy-person]");
+      if (!b) return;
+      var t = b.getAttribute("data-address") || "";
+      navigator.clipboard.writeText(t).then(function () { showToast("Copied to clipboard!"); }).catch(function () {});
+    });
+  })();
+  </script>
+
+  <section class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
+    <div class="max-w-3xl mx-auto">
+      <h2 class="text-2xl font-bold text-gray-900 mb-4">About Random Person Generator</h2>
+      <p class="text-gray-600 leading-relaxed mb-4">Our random person generator creates complete fictional profiles that include name, gender, age, street address, city, state, ZIP code, phone number, email address, and username. Each profile is internally consistent — the address components match, the phone area code corresponds to the state, and the email uses a real domain.</p>
+      <p class="text-gray-600 leading-relaxed mb-4">Use these profiles for testing user registration flows, populating demo databases, load testing with realistic user data, and any scenario where you need complete fictional identities. All data is randomly generated and contains no real personal information.</p>
+    </div>
+    <div class="mt-12">
+      <h3 class="text-xl font-semibold text-gray-900 mb-6 text-center">Related Tools</h3>
+      <div class="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
+        <ToolCard href="/name-generator/" title="Name Generator" description="Generate random first and last names for US residents." />
+        <ToolCard href="/email-generator/" title="Email Generator" description="Generate random email addresses for testing." />
+        <ToolCard href="/username-generator/" title="Username Generator" description="Generate random usernames for testing and profiles." />
+        <ToolCard href="/random-address-generator/" title="Random US Address Generator" description="Generate random US addresses with complete details." />
+        <ToolCard href="/phone-number-generator/" title="Phone Number Generator" description="Generate random US phone numbers with area codes." />
+      </div>
+    </div>
+  </section>
+
+  <FAQs faqs={faqs} />
 </Layout>

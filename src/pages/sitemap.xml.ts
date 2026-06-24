@@ -6,7 +6,7 @@ import { articles } from '../lib/blog';
 const staticPages = [
   '', 'about/', 'contact/', 'privacy-policy/', 'terms/', 'cookie-policy/',
   'disclaimer/', 'dmca/', 'all-tools/', 'blog/',
-  'random-address-generator/', 'test-address-generator/', 'street-address-generator/',
+  'random-address-generator/', 'us-address-generator/', 'street-address-generator/',
   'random-person-generator/', 'name-generator/', 'email-generator/', 'username-generator/',
   'company-name-generator/', 'phone-number-generator/', 'random-state-generator/',
   'random-city-generator/', 'us-address/', 'states/', 'cities/', 'zip-codes/',

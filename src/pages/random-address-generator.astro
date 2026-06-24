@@ -2,23 +2,53 @@
 import Layout from '../layouts/Layout.astro';
 import GeneratorTool from '../components/GeneratorTool.astro';
 import AddressCard from '../components/AddressCard.astro';
+import ToolCard from '../components/ToolCard.astro';
+import FAQs from '../components/FAQs.astro';
 import Breadcrumbs from '../components/Breadcrumbs.astro';
-import { buildTitle, SITE_URL } from '../lib/seo';
-const title = buildTitle('Random Address Generator - Random US Addresses');
+import { buildTitle, SITE_URL, getFAQSchema, getWebPageSchema } from '../lib/seo';
+const title = buildTitle('Random US Address Generator - Random US Addresses');
 const description = 'Generate random US addresses instantly with street, city, state, ZIP code, phone number, and email. Free random address generator for testing.';
 const keywords = 'random address generator, random US address, free address generator, test address, US address generator';
 const canonical = `${SITE_URL}/random-address-generator/`;
+const faqs = [
+  { question: 'What is a random address generator?', answer: 'A random address generator is a tool that creates fictional but realistic US addresses for testing, development, and educational purposes. It generates complete addresses including street names, cities, states, ZIP codes, phone numbers, and emails.' },
+  { question: 'Are these addresses real?', answer: 'No, these addresses are randomly generated and are not real. They are created using realistic datasets and are intended for testing purposes only.' },
+  { question: 'Can I use these addresses for shipping?', answer: 'No, these addresses are randomly generated and should not be used for shipping, legal documents, or any official purposes.' },
+  { question: 'Is this tool free?', answer: 'Yes, our random address generator is completely free to use with no registration required.' },
+  { question: 'How many addresses can I generate?', answer: 'You can generate as many addresses as you want by clicking the Generate New button.' },
+  { question: 'What information is included in each address?', answer: 'Each generated address includes a name, street address, city, state, ZIP code, phone number with valid area code, and email address.' },
+];
 ---
 
 <Layout title={title} description={description} keywords={keywords} canonical={canonical}>
+  <script slot="schema" type="application/ld+json" set:html={JSON.stringify(getWebPageSchema(title, description, canonical))} />
+  <script slot="schema" type="application/ld+json" set:html={JSON.stringify(getFAQSchema(faqs))} />
   <Breadcrumbs items={[
     { name: 'Home', url: '/' },
-    { name: 'Random Address Generator', url: '/random-address-generator/' },
+    { name: 'Random US Address Generator', url: '/random-address-generator/' },
   ]} />
   <GeneratorTool
-    title="Random Address Generator"
+    title="Random US Address Generator"
     description={description}
   >
     <AddressCard />
   </GeneratorTool>
+
+  <section class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
+    <div class="max-w-3xl mx-auto">
+      <h2 class="text-2xl font-bold text-gray-900 mb-4">About Random US Address Generator</h2>
+      <p class="text-gray-600 leading-relaxed mb-4">Our random US address generator creates realistic addresses that include street numbers, street names, cities, states, ZIP codes, phone numbers with valid area codes, and email addresses. Each address is internally consistent — the city matches the state, the ZIP code falls within the correct range, and the area code belongs to the state.</p>
+      <p class="text-gray-600 leading-relaxed mb-4">Use it for software testing, form validation, demo data, educational projects, and any scenario where you need realistic US addresses without using real personal information. Generate as many addresses as you need with one click.</p>
+    </div>
+    <div class="mt-12">
+      <h3 class="text-xl font-semibold text-gray-900 mb-6 text-center">Related Tools</h3>
+      <div class="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
+        <ToolCard href="/us-address-generator/" title="US Address Generator" description="Generate random US addresses for testing and development." />
+        <ToolCard href="/street-address-generator/" title="Street Address Generator" description="Generate random street addresses with realistic street names." />
+        <ToolCard href="/random-person-generator/" title="Person Generator" description="Generate complete person profiles with address, phone, and email." />
+      </div>
+    </div>
+  </section>
+
+  <FAQs faqs={faqs} />
 </Layout>

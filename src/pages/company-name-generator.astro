@@ -1,26 +1,27 @@
 ---
 import Layout from '../layouts/Layout.astro';
 import GeneratorTool from '../components/GeneratorTool.astro';
+import ToolCard from '../components/ToolCard.astro';
+import FAQs from '../components/FAQs.astro';
 import Breadcrumbs from '../components/Breadcrumbs.astro';
-import { buildTitle, SITE_URL } from '../lib/seo';
+import { buildTitle, SITE_URL, getFAQSchema, getWebPageSchema } from '../lib/seo';
 const title = buildTitle('Company Name Generator - Random Company Names');
 const description = 'Generate random company and business names for brainstorming and testing.';
 const keywords = 'company name generator, business name generator, random company name, LLC name generator, business name ideas';
 const canonical = `${SITE_URL}/company-name-generator/`;
-
-const prefixes = ['Tech', 'Global', 'Prime', 'Core', 'Elite', 'Peak', 'Summit', 'Apex', 'Nova', 'Metro', 'Urban', 'Coast', 'Valley', 'Pioneer', 'Legacy'];
-const suffixes = ['Solutions', 'Group', 'Systems', 'Technologies', 'Enterprises', 'Industries', 'Partners', 'Associates', 'Services', 'Consulting', 'Corp', 'Inc', 'LLC', 'Co', 'Ventures'];
-const dataJson = JSON.stringify({ prefixes, suffixes });
-const script = `(function(){
-var D=${dataJson};
-function p(a){return a[Math.floor(Math.random()*a.length)]}
-function render(){var c=document.getElementById("company-list");if(!c)return;c.innerHTML="";for(var i=0;i<10;i++){var d=document.createElement("div");d.className="text-lg font-semibold text-gray-900 dark:text-gray-100 bg-gray-50 dark:bg-slate-700 rounded-xl px-4 py-3";d.textContent=p(D.prefixes)+" "+p(D.suffixes);c.appendChild(d)}}
-document.addEventListener("DOMContentLoaded",render);
-document.addEventListener("click",function(e){if(e.target.closest("[data-regenerate]")){render()}});
-})();`;
+const faqs = [
+  { question: 'What is a company name generator?', answer: 'A company name generator creates random business names by combining professional prefixes with industry suffixes for brainstorming and testing.' },
+  { question: 'What prefixes and suffixes are used?', answer: 'Prefixes include Tech, Global, Prime, Elite, Peak, Apex, Nova, and more. Suffixes include Solutions, Group, Technologies, LLC, Inc, Corp, and more.' },
+  { question: 'How many names are generated at once?', answer: 'The generator produces ten unique company names at a time.' },
+  { question: 'Can I use these names for my business?', answer: 'These names are randomly generated for inspiration and testing. You should verify trademark availability before using any name commercially.' },
+  { question: 'Is this tool free?', answer: 'Yes, our company name generator is completely free to use with no registration required.' },
+  { question: 'What formats are available?', answer: 'Names are formatted as professional business names like "Elite Technologies" or "Apex Consulting" with various legal suffixes.' },
+];
 ---
 
 <Layout title={title} description={description} keywords={keywords} canonical={canonical}>
+  <script slot="schema" type="application/ld+json" set:html={JSON.stringify(getWebPageSchema(title, description, canonical))} />
+  <script slot="schema" type="application/ld+json" set:html={JSON.stringify(getFAQSchema(faqs))} />
   <Breadcrumbs items={[
     { name: 'Home', url: '/' },
     { name: 'Company Name Generator', url: '/company-name-generator/' },
@@ -33,5 +34,41 @@ document.addEventListener("click",function(e){if(e.target.closest("[data-regener
       <div class="space-y-2" id="company-list"></div>
     </div>
   </GeneratorTool>
-  <script is:inline set:html={script}></script>
+  <script is:inline>
+  (function () {
+    function render() {
+      fetch("/api/companies.json?count=10").then(function (r) { return r.json(); }).then(function (companies) {
+        var c = document.getElementById("company-list");
+        if (!c) return;
+        c.innerHTML = "";
+        companies.forEach(function (name) {
+          var d = document.createElement("div");
+          d.className = "text-lg font-semibold text-gray-900 dark:text-gray-100 bg-gray-50 dark:bg-slate-700 rounded-xl px-4 py-3";
+          d.textContent = name;
+          c.appendChild(d);
+        });
+      }).catch(function () {});
+    }
+    document.addEventListener("DOMContentLoaded", render);
+    document.addEventListener("click", function (e) { if (e.target.closest("[data-regenerate]")) { render(); } });
+  })();
+  </script>
+
+  <section class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
+    <div class="max-w-3xl mx-auto">
+      <h2 class="text-2xl font-bold text-gray-900 mb-4">About Company Name Generator</h2>
+      <p class="text-gray-600 leading-relaxed mb-4">Our company name generator creates random business names by combining professional prefixes (Tech, Global, Prime, Elite, etc.) with industry suffixes (Solutions, Group, Technologies, LLC, etc.). Each name is formatted as a real business name like "Elite Technologies" or "Apex Consulting".</p>
+      <p class="text-gray-600 leading-relaxed mb-4">Use it to brainstorm company names for startups, generate test data for B2B applications, populate demo databases with realistic business names, or find inspiration for your next venture.</p>
+    </div>
+    <div class="mt-12">
+      <h3 class="text-xl font-semibold text-gray-900 mb-6 text-center">Related Tools</h3>
+      <div class="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
+        <ToolCard href="/name-generator/" title="Name Generator" description="Generate random first and last names for US residents." />
+        <ToolCard href="/email-generator/" title="Email Generator" description="Generate random email addresses for testing." />
+        <ToolCard href="/random-person-generator/" title="Random Person Generator" description="Generate complete person profiles with name, address, phone, and email." />
+      </div>
+    </div>
+  </section>
+
+  <FAQs faqs={faqs} />
 </Layout>

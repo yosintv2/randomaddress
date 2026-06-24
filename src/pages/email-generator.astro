@@ -1,28 +1,27 @@
 ---
 import Layout from '../layouts/Layout.astro';
 import GeneratorTool from '../components/GeneratorTool.astro';
+import ToolCard from '../components/ToolCard.astro';
+import FAQs from '../components/FAQs.astro';
 import Breadcrumbs from '../components/Breadcrumbs.astro';
-import firstNames from '../data/firstNames.json';
-import lastNames from '../data/lastNames.json';
-import { buildTitle, SITE_URL } from '../lib/seo';
+import { buildTitle, SITE_URL, getFAQSchema, getWebPageSchema } from '../lib/seo';
 const title = buildTitle('Email Generator - Random Email Addresses');
 const description = 'Generate random email addresses for testing and development purposes.';
 const keywords = 'email generator, random email address, test email, temporary email, disposable email';
 const canonical = `${SITE_URL}/email-generator/`;
-
-const dataJson = JSON.stringify({ firstNames, lastNames });
-const script = `(function(){
-var D=${dataJson};
-function p(a){return a[Math.floor(Math.random()*a.length)]}
-var DM=["gmail.com","yahoo.com","outlook.com","hotmail.com","aol.com","icloud.com","protonmail.com"];
-function ge(){var fn=p(D.firstNames),ln=p(D.lastNames);return fn.toLowerCase()+"."+ln.toLowerCase()+Math.floor(Math.random()*999)+"@"+p(DM)}
-function render(){var c=document.getElementById("email-list");if(!c)return;c.innerHTML="";for(var i=0;i<10;i++){var d=document.createElement("div");d.className="font-mono text-sm text-gray-900 dark:text-gray-100 bg-gray-50 dark:bg-slate-700 rounded-xl px-4 py-2.5";d.textContent=ge();c.appendChild(d)}}
-document.addEventListener("DOMContentLoaded",render);
-document.addEventListener("click",function(e){if(e.target.closest("[data-regenerate]")){render()}});
-})();`;
+const faqs = [
+  { question: 'What is an email generator?', answer: 'An email generator creates random email addresses using real name combinations and popular email domains for testing and development.' },
+  { question: 'Are these real email addresses?', answer: 'No, these are randomly generated email addresses. They are not connected to any real mailbox and cannot receive mail.' },
+  { question: 'What email domains are used?', answer: 'We use popular domains including gmail.com, yahoo.com, outlook.com, hotmail.com, aol.com, icloud.com, and protonmail.com.' },
+  { question: 'What format do the emails use?', answer: 'Emails follow the format firstname.lastname###@domain.com for realistic results.' },
+  { question: 'Can I use these for testing?', answer: 'Yes, these addresses are perfect for testing registration forms, email validation, and populating databases.' },
+  { question: 'Is this tool free?', answer: 'Yes, our email generator is completely free to use with no registration required.' },
+];
 ---
 
 <Layout title={title} description={description} keywords={keywords} canonical={canonical}>
+  <script slot="schema" type="application/ld+json" set:html={JSON.stringify(getWebPageSchema(title, description, canonical))} />
+  <script slot="schema" type="application/ld+json" set:html={JSON.stringify(getFAQSchema(faqs))} />
   <Breadcrumbs items={[
     { name: 'Home', url: '/' },
     { name: 'Email Generator', url: '/email-generator/' },
@@ -35,5 +34,41 @@ document.addEventListener("click",function(e){if(e.target.closest("[data-regener
       <div class="space-y-2" id="email-list"></div>
     </div>
   </GeneratorTool>
-  <script is:inline set:html={script}></script>
+  <script is:inline>
+  (function () {
+    function render() {
+      fetch("/api/emails.json?count=10").then(function (r) { return r.json(); }).then(function (emails) {
+        var c = document.getElementById("email-list");
+        if (!c) return;
+        c.innerHTML = "";
+        emails.forEach(function (e) {
+          var d = document.createElement("div");
+          d.className = "font-mono text-sm text-gray-900 dark:text-gray-100 bg-gray-50 dark:bg-slate-700 rounded-xl px-4 py-2.5";
+          d.textContent = e;
+          c.appendChild(d);
+        });
+      }).catch(function () {});
+    }
+    document.addEventListener("DOMContentLoaded", render);
+    document.addEventListener("click", function (e) { if (e.target.closest("[data-regenerate]")) { render(); } });
+  })();
+  </script>
+
+  <section class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
+    <div class="max-w-3xl mx-auto">
+      <h2 class="text-2xl font-bold text-gray-900 mb-4">About Email Generator</h2>
+      <p class="text-gray-600 leading-relaxed mb-4">Our email generator creates random email addresses using real first and last name combinations with popular email domains like gmail.com, yahoo.com, outlook.com, and more. Each email follows the format firstname.lastname###@domain.com for realistic results.</p>
+      <p class="text-gray-600 leading-relaxed mb-4">Use these addresses for testing registration forms, validating email input fields, populating user databases with realistic data, and any development scenario that requires test email addresses.</p>
+    </div>
+    <div class="mt-12">
+      <h3 class="text-xl font-semibold text-gray-900 mb-6 text-center">Related Tools</h3>
+      <div class="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
+        <ToolCard href="/name-generator/" title="Name Generator" description="Generate random first and last names for US residents." />
+        <ToolCard href="/username-generator/" title="Username Generator" description="Generate random usernames for testing and online profiles." />
+        <ToolCard href="/random-person-generator/" title="Random Person Generator" description="Generate complete person profiles with name, address, phone, and email." />
+      </div>
+    </div>
+  </section>
+
+  <FAQs faqs={faqs} />
 </Layout>

@@ -2,15 +2,27 @@
 import Layout from '../layouts/Layout.astro';
 import GeneratorTool from '../components/GeneratorTool.astro';
 import AddressCard from '../components/AddressCard.astro';
+import ToolCard from '../components/ToolCard.astro';
+import FAQs from '../components/FAQs.astro';
 import Breadcrumbs from '../components/Breadcrumbs.astro';
-import { buildTitle, SITE_URL } from '../lib/seo';
+import { buildTitle, SITE_URL, getFAQSchema, getWebPageSchema } from '../lib/seo';
 const title = buildTitle('Street Address Generator - Random Street Addresses');
 const description = 'Generate random US street addresses with realistic street names, numbers, city, state, ZIP, and email. Free street address generator.';
 const keywords = 'street address generator, random street address, US street address, free street address, test street address';
 const canonical = `${SITE_URL}/street-address-generator/`;
+const faqs = [
+  { question: 'What is a street address generator?', answer: 'A street address generator creates random US street addresses with realistic street names and numbers, including city, state, ZIP code, phone number, and email.' },
+  { question: 'Are these real street addresses?', answer: 'No, these are randomly generated street addresses using realistic street names from our datasets. They are fictional and for testing only.' },
+  { question: 'What street names do you use?', answer: 'We use a curated dataset of real US street names including common types like Street, Avenue, Boulevard, Drive, Lane, Court, and more.' },
+  { question: 'Can I generate multiple addresses?', answer: 'Yes, you can generate as many street addresses as you want by clicking the Generate New button.' },
+  { question: 'Is this tool free?', answer: 'Yes, our street address generator is completely free to use with no registration required.' },
+  { question: 'What formats are supported?', answer: 'Addresses include street number, street name, city, state, ZIP code, phone number with area code, and email address.' },
+];
 ---
 
 <Layout title={title} description={description} keywords={keywords} canonical={canonical}>
+  <script slot="schema" type="application/ld+json" set:html={JSON.stringify(getWebPageSchema(title, description, canonical))} />
+  <script slot="schema" type="application/ld+json" set:html={JSON.stringify(getFAQSchema(faqs))} />
   <Breadcrumbs items={[
     { name: 'Home', url: '/' },
     { name: 'Street Address Generator', url: '/street-address-generator/' },
@@ -21,4 +33,22 @@ const canonical = `${SITE_URL}/street-address-generator/`;
   >
     <AddressCard />
   </GeneratorTool>
+
+  <section class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
+    <div class="max-w-3xl mx-auto">
+      <h2 class="text-2xl font-bold text-gray-900 mb-4">About Street Address Generator</h2>
+      <p class="text-gray-600 leading-relaxed mb-4">Our street address generator creates random US street addresses with realistic street names and numbers. Each address includes a street number, street name, city, state, ZIP code, phone number with valid area code, and a matching email address. The street names come from a curated dataset of real US street names for authenticity.</p>
+      <p class="text-gray-600 leading-relaxed mb-4">Use it to generate test data for shipping forms, validate address input fields, populate demo databases, or create sample data for your applications. Every generated address is internally consistent and ready to use.</p>
+    </div>
+    <div class="mt-12">
+      <h3 class="text-xl font-semibold text-gray-900 mb-6 text-center">Related Tools</h3>
+      <div class="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
+        <ToolCard href="/random-address-generator/" title="Random US Address Generator" description="Generate random US addresses with complete details." />
+        <ToolCard href="/us-address-generator/" title="US Address Generator" description="Generate random US addresses for testing and development." />
+        <ToolCard href="/random-person-generator/" title="Person Generator" description="Generate complete person profiles with address, phone, and email." />
+      </div>
+    </div>
+  </section>
+
+  <FAQs faqs={faqs} />
 </Layout>

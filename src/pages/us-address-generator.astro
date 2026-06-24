@@ -1,0 +1,54 @@
+---
+import Layout from '../layouts/Layout.astro';
+import GeneratorTool from '../components/GeneratorTool.astro';
+import AddressCard from '../components/AddressCard.astro';
+import ToolCard from '../components/ToolCard.astro';
+import FAQs from '../components/FAQs.astro';
+import Breadcrumbs from '../components/Breadcrumbs.astro';
+import { buildTitle, SITE_URL, getFAQSchema, getWebPageSchema } from '../lib/seo';
+const title = buildTitle('US Address Generator - Random USA Addresses');
+const description = 'Generate random US addresses with names, street, city, state, ZIP code, phone number, and email. Free US address generator for testing and development.';
+const keywords = 'US address generator, random USA address, US address, American address generator, free US address, random address';
+const canonical = `${SITE_URL}/us-address-generator/`;
+const faqs = [
+  { question: 'What is a US address generator?', answer: 'A US address generator is a free online tool that creates random but realistic addresses for all 50 US states, including street names, cities, ZIP codes, phone numbers, and emails.' },
+  { question: 'Are these real US addresses?', answer: 'No, these addresses are randomly generated using realistic datasets. They are fictional and should not be used for shipping or official purposes.' },
+  { question: 'Do you support all 50 states?', answer: 'Yes, our generator covers all 50 US states plus Washington DC and Puerto Rico.' },
+  { question: 'Is this tool free to use?', answer: 'Yes, the US address generator is completely free. No registration or account is required.' },
+  { question: 'What is included in each address?', answer: 'Each address includes a resident name, street address, city, state, ZIP code, phone number with valid area code, and email address.' },
+  { question: 'How does the US address generator work?', answer: 'Our generator combines random street names, numbers, cities, states, and ZIP codes from our datasets to create realistic-looking American addresses.' },
+];
+---
+
+<Layout title={title} description={description} keywords={keywords} canonical={canonical}>
+  <script slot="schema" type="application/ld+json" set:html={JSON.stringify(getWebPageSchema(title, description, canonical))} />
+  <script slot="schema" type="application/ld+json" set:html={JSON.stringify(getFAQSchema(faqs))} />
+  <Breadcrumbs items={[
+    { name: 'Home', url: '/' },
+    { name: 'US Address Generator', url: '/us-address-generator/' },
+  ]} />
+  <GeneratorTool
+    title="US Address Generator"
+    description={description}
+  >
+    <AddressCard />
+  </GeneratorTool>
+
+  <section class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
+    <div class="max-w-3xl mx-auto">
+      <h2 class="text-2xl font-bold text-gray-900 mb-4">About US Address Generator</h2>
+      <p class="text-gray-600 leading-relaxed mb-4">Our US address generator creates realistic American addresses with complete details including resident name, street address, city, state, ZIP code, phone number, and email. All data is internally consistent — cities match their states, ZIP codes are valid for the city, and phone area codes belong to the correct state.</p>
+      <p class="text-gray-600 leading-relaxed mb-4">Perfect for developers testing US-centric applications, QA engineers validating address forms, educators teaching address formats, and anyone who needs realistic US test data. The generator covers all 50 states plus Washington DC and Puerto Rico.</p>
+    </div>
+    <div class="mt-12">
+      <h3 class="text-xl font-semibold text-gray-900 mb-6 text-center">Related Tools</h3>
+      <div class="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
+        <ToolCard href="/random-address-generator/" title="Random US Address Generator" description="Generate random US addresses with complete details." />
+        <ToolCard href="/street-address-generator/" title="Street Address Generator" description="Generate random street addresses with realistic street names." />
+        <ToolCard href="/random-person-generator/" title="Person Generator" description="Generate complete person profiles with address, phone, and email." />
+      </div>
+    </div>
+  </section>
+
+  <FAQs faqs={faqs} />
+</Layout>

@@ -1,27 +1,27 @@
 ---
 import Layout from '../layouts/Layout.astro';
 import GeneratorTool from '../components/GeneratorTool.astro';
+import ToolCard from '../components/ToolCard.astro';
+import FAQs from '../components/FAQs.astro';
 import Breadcrumbs from '../components/Breadcrumbs.astro';
-import { buildTitle, SITE_URL } from '../lib/seo';
+import { buildTitle, SITE_URL, getFAQSchema, getWebPageSchema } from '../lib/seo';
 const title = buildTitle('Phone Number Generator - Random US Phone Numbers');
 const description = 'Generate random US phone numbers with realistic area codes for all 50 states.';
 const keywords = 'phone number generator, random phone number, US phone number, test phone number, free phone number';
 const canonical = `${SITE_URL}/phone-number-generator/`;
-
-const AC = { CA:"213",TX:"713",NY:"212",FL:"305",IL:"312",PA:"215",OH:"614",GA:"404",NC:"704",MI:"313",NJ:"201",VA:"703",WA:"206",AZ:"602",MA:"617",TN:"615",IN:"317",MO:"314",MD:"301",WI:"414",CO:"303",MN:"612",SC:"803",AL:"205",LA:"504",KY:"502",OR:"503",OK:"405",CT:"203",IA:"515",MS:"601",AR:"501",KS:"913",UT:"801",NV:"702",NM:"505",WV:"304",NE:"402",ID:"208",HI:"808",ME:"207",NH:"603",RI:"401",MT:"406",DE:"302",SD:"605",ND:"701",AK:"907",VT:"802",WY:"307" };
-const states = Object.keys(AC);
-const dataJson = JSON.stringify({ states, areaCodes: AC });
-const script = `(function(){
-var D=${dataJson};
-function gp(){var s=D.states[Math.floor(Math.random()*D.states.length)],a=D.areaCodes[s]||"555";return "("+a+")"+String(Math.floor(Math.random()*900)+100)+"-"+String(Math.floor(Math.random()*9000)+1000)}
-function render(){var c=document.getElementById("phone-list");if(!c)return;c.innerHTML="";for(var i=0;i<5;i++){(function(pn){var d=document.createElement("div");d.className="flex items-center justify-between bg-gray-50 dark:bg-slate-700 rounded-xl px-4 py-3 font-mono text-gray-900 dark:text-gray-100 text-lg";d.innerHTML='<span>'+pn+'</span><button class="text-gray-400 hover:text-brand-600 transition-colors" data-copy-pn="'+pn+'"><svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 5H6a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2v-1M8 5a2 2 0 002 2h2a2 2 0 002-2M8 5a2 2 0 012-2h2a2 2 0 012 2m0 0h2a2 2 0 012 2v3m2 4H10m0 0l3-3m-3 3l3 3"/></svg></button>';c.appendChild(d)})(gp())}}
-document.addEventListener("DOMContentLoaded",render);
-document.addEventListener("click",function(e){if(e.target.closest("[data-regenerate]")){render()}});
-document.addEventListener("click",function(e){var b=e.target.closest("[data-copy-pn]");if(!b)return;navigator.clipboard.writeText(b.getAttribute("data-copy-pn")||"");var o=b.innerHTML;b.innerHTML='<svg class="w-5 h-5 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>';setTimeout(function(){b.innerHTML=o},1500)});
-})();`;
+const faqs = [
+  { question: 'What is a phone number generator?', answer: 'A phone number generator creates random US phone numbers with valid area codes for all 50 states for testing and development.' },
+  { question: 'Are these real phone numbers?', answer: 'No, these are randomly generated phone numbers with valid area codes but fictional line numbers.' },
+  { question: 'What area codes are used?', answer: 'Area codes correspond to real geographic regions. California uses 213/323, New York uses 212/718, Texas uses 713/214, and so on for all 50 states.' },
+  { question: 'What format do the numbers use?', answer: 'Numbers follow the standard US format (XXX) XXX-XXXX.' },
+  { question: 'How many numbers are generated at once?', answer: 'The generator produces five phone numbers at a time with different area codes.' },
+  { question: 'Is this tool free?', answer: 'Yes, our phone number generator is completely free to use with no registration required.' },
+];
 ---
 
 <Layout title={title} description={description} keywords={keywords} canonical={canonical}>
+  <script slot="schema" type="application/ld+json" set:html={JSON.stringify(getWebPageSchema(title, description, canonical))} />
+  <script slot="schema" type="application/ld+json" set:html={JSON.stringify(getFAQSchema(faqs))} />
   <Breadcrumbs items={[
     { name: 'Home', url: '/' },
     { name: 'Phone Number Generator', url: '/phone-number-generator/' },
@@ -34,5 +34,49 @@ document.addEventListener("click",function(e){var b=e.target.closest("[data-copy
       <div class="space-y-3" id="phone-list"></div>
     </div>
   </GeneratorTool>
-  <script is:inline set:html={script}></script>
+  <script is:inline>
+  (function () {
+    function render() {
+      fetch("/api/phones.json?count=5").then(function (r) { return r.json(); }).then(function (phones) {
+        var c = document.getElementById("phone-list");
+        if (!c) return;
+        c.innerHTML = "";
+        phones.forEach(function (pn) {
+          var d = document.createElement("div");
+          d.className = "flex items-center justify-between bg-gray-50 dark:bg-slate-700 rounded-xl px-4 py-3 font-mono text-gray-900 dark:text-gray-100 text-lg";
+          d.innerHTML = '<span>' + pn + '</span><button class="text-gray-400 hover:text-brand-600 transition-colors" data-copy-pn="' + pn + '"><svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 5H6a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2v-1M8 5a2 2 0 002 2h2a2 2 0 002-2M8 5a2 2 0 012-2h2a2 2 0 012 2m0 0h2a2 2 0 012 2v3m2 4H10m0 0l3-3m-3 3l3 3"/></svg></button>';
+          c.appendChild(d);
+        });
+      }).catch(function () {});
+    }
+    document.addEventListener("DOMContentLoaded", render);
+    document.addEventListener("click", function (e) { if (e.target.closest("[data-regenerate]")) { render(); } });
+    document.addEventListener("click", function (e) {
+      var b = e.target.closest("[data-copy-pn]");
+      if (!b) return;
+      navigator.clipboard.writeText(b.getAttribute("data-copy-pn") || "");
+      var o = b.innerHTML;
+      b.innerHTML = '<svg class="w-5 h-5 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>';
+      setTimeout(function () { b.innerHTML = o; }, 1500);
+    });
+  })();
+  </script>
+
+  <section class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
+    <div class="max-w-3xl mx-auto">
+      <h2 class="text-2xl font-bold text-gray-900 mb-4">About Phone Number Generator</h2>
+      <p class="text-gray-600 leading-relaxed mb-4">Our phone number generator creates random US phone numbers with valid area codes for all 50 states. Each number follows the standard (XXX) XXX-XXXX format with area codes that correspond to real geographic regions. Numbers from California use 213 or 323, New York uses 212 or 718, Texas uses 713 or 214, and so on.</p>
+      <p class="text-gray-600 leading-relaxed mb-4">Use these numbers for testing form validation, populating user profiles with realistic contact data, developing communication features, and any scenario requiring test phone numbers. Each number includes a copy button for easy use.</p>
+    </div>
+    <div class="mt-12">
+      <h3 class="text-xl font-semibold text-gray-900 mb-6 text-center">Related Tools</h3>
+      <div class="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
+        <ToolCard href="/random-person-generator/" title="Random Person Generator" description="Generate complete person profiles with name, address, phone, and email." />
+        <ToolCard href="/random-address-generator/" title="Random US Address Generator" description="Generate random US addresses with complete details." />
+        <ToolCard href="/email-generator/" title="Email Generator" description="Generate random email addresses for testing." />
+      </div>
+    </div>
+  </section>
+
+  <FAQs faqs={faqs} />
 </Layout>

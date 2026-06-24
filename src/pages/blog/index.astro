@@ -19,8 +19,15 @@ const canonical = `${SITE_URL}/blog/`;
     <div class="grid gap-6 sm:grid-cols-2">
       {articles.map(a => (
         <a href={`/blog/${a.slug}/`} class="glass-card rounded-2xl p-6 card-hover block">
-          <time class="text-xs text-gray-400 uppercase tracking-wider font-medium">{a.date}</time>
-          <h2 class="text-lg font-semibold text-gray-900 mt-2 mb-2 leading-snug">{a.title}</h2>
+          <div class="flex flex-wrap items-center gap-2 text-xs text-gray-400 uppercase tracking-wider font-medium mb-2">
+            <time>{a.date}</time>
+            <span>·</span>
+            <span>{a.readingTime} min read</span>
+            <span>·</span>
+            <span class="inline-block text-xs font-semibold uppercase tracking-wider text-brand-600 bg-brand-50 dark:text-brand-300 dark:bg-brand-900/30 px-3 py-1 rounded-full">{a.category}</span>
+          </div>
+          <h2 class="text-lg font-semibold text-gray-900 mb-1 leading-snug">{a.title}</h2>
+          <p class="text-xs text-gray-400 mb-2">By {a.author}</p>
           <p class="text-sm text-gray-500 line-clamp-3">{a.content.replace(/<[^>]+>/g, '').split('\n\n')[0]}</p>
           <span class="inline-flex items-center gap-1 text-sm text-brand-600 font-medium mt-3">
             Read more

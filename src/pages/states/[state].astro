@@ -2,23 +2,27 @@
 import Layout from '../../layouts/Layout.astro';
 import AddressCard from '../../components/AddressCard.astro';
 import Breadcrumbs from '../../components/Breadcrumbs.astro';
+import FAQs from '../../components/FAQs.astro';
 import { getStates, getCities } from '../../lib/generator';
-import { buildTitle, slugify, SITE_URL } from '../../lib/seo';
+import { buildTitle, slugify, SITE_URL, getFAQSchema, getStateFAQs, getStateContent } from '../../lib/seo';
 
-export function getStaticPaths() {
-  return getStates().map(s => ({
-    params: { state: slugify(s.name) },
-    props: { state: s },
-  }));
+const { state: stateSlug } = Astro.params;
+const allStates = getStates();
+const state = allStates.find(s => slugify(s.name) === stateSlug);
+
+if (!state) {
+  Astro.redirect('/404');
+  return;
 }
 
-const { state } = Astro.props;
-const stateSlug = slugify(state.name);
 const stateCities = getCities().filter(c => c.state === state.name).slice(0, 12);
 const title = buildTitle(`${state.name} Address Generator - Random ${state.name} Addresses`);
 const description = `Generate random ${state.name} addresses with real cities, ZIP codes, and phone numbers. Free ${state.name} random address generator for testing.`;
 const keywords = `${state.name} address generator, random ${state.name} address, ${state.name} ZIP codes, ${state.abbr} address generator, free ${state.name} test data`;
+const faqs = getStateFAQs(state.name);
 const canonical = `${SITE_URL}/states/${stateSlug}/`;
+const stateCitiesList = getCities().filter(c => c.state === state.name).map(c => c.city);
+const stateContent = getStateContent(state.name, [...new Set(stateCitiesList)]);
 ---
 
 <Layout title={title} description={description} keywords={keywords} canonical={canonical}>
@@ -34,6 +38,7 @@ const canonical = `${SITE_URL}/states/${stateSlug}/`;
     description,
     address: { '@type': 'PostalAddress', addressRegion: state.abbr, addressCountry: 'US' },
   })} />
+  <script slot="schema" type="application/ld+json" set:html={JSON.stringify(getFAQSchema(faqs))} />
 
   <section class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
     <div class="text-center mb-8">
@@ -59,4 +64,12 @@ const canonical = `${SITE_URL}/states/${stateSlug}/`;
       </section>
     )}
   </section>
+
+  <section class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+    <div class="max-w-3xl mx-auto space-y-4 text-gray-600 leading-relaxed">
+      {stateContent.map(p => <p>{p}</p>)}
+    </div>
+  </section>
+
+  <FAQs faqs={faqs} />
 </Layout>

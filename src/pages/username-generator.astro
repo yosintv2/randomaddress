@@ -1,27 +1,27 @@
 ---
 import Layout from '../layouts/Layout.astro';
 import GeneratorTool from '../components/GeneratorTool.astro';
+import ToolCard from '../components/ToolCard.astro';
+import FAQs from '../components/FAQs.astro';
 import Breadcrumbs from '../components/Breadcrumbs.astro';
-import firstNames from '../data/firstNames.json';
-import lastNames from '../data/lastNames.json';
-import { buildTitle, SITE_URL } from '../lib/seo';
+import { buildTitle, SITE_URL, getFAQSchema, getWebPageSchema } from '../lib/seo';
 const title = buildTitle('Username Generator - Random Usernames');
 const description = 'Generate random usernames for testing, gaming, and online profiles.';
 const keywords = 'username generator, random username, username ideas, cool usernames, username creator';
 const canonical = `${SITE_URL}/username-generator/`;
-
-const dataJson = JSON.stringify({ firstNames, lastNames });
-const script = `(function(){
-var D=${dataJson};
-function p(a){return a[Math.floor(Math.random()*a.length)]}
-function gu(){var fn=p(D.firstNames),ln=p(D.lastNames),num=Math.floor(Math.random()*9999);var styles=[fn.toLowerCase()+ln.toLowerCase(),fn.toLowerCase()+"."+ln.toLowerCase(),fn.toLowerCase()+"_"+ln.toLowerCase(),fn.toLowerCase()+num,ln.toLowerCase()+num];return p(styles)}
-function render(){var c=document.getElementById("username-list");if(!c)return;c.innerHTML="";for(var i=0;i<10;i++){var d=document.createElement("div");d.className="font-mono text-sm text-gray-900 dark:text-gray-100 bg-gray-50 dark:bg-slate-700 rounded-xl px-4 py-2.5";d.textContent=gu();c.appendChild(d)}}
-document.addEventListener("DOMContentLoaded",render);
-document.addEventListener("click",function(e){if(e.target.closest("[data-regenerate]")){render()}});
-})();`;
+const faqs = [
+  { question: 'What is a username generator?', answer: 'A username generator creates random usernames using name combinations and various formatting styles for testing and online profiles.' },
+  { question: 'What styles of usernames are generated?', answer: 'Usernames are generated in multiple styles including lowercase concatenation, dot-separated, underscore-separated, and numbered formats.' },
+  { question: 'How many usernames are generated at once?', answer: 'The generator produces ten usernames at a time with different style variations.' },
+  { question: 'Can I use these for testing?', answer: 'Yes, these usernames are perfect for testing user registration, social media profiles, and populating databases.' },
+  { question: 'Is this tool free?', answer: 'Yes, our username generator is completely free to use with no registration required.' },
+  { question: 'How are the usernames created?', answer: 'Usernames are created from random first and last name combinations with numbers appended for uniqueness.' },
+];
 ---
 
 <Layout title={title} description={description} keywords={keywords} canonical={canonical}>
+  <script slot="schema" type="application/ld+json" set:html={JSON.stringify(getWebPageSchema(title, description, canonical))} />
+  <script slot="schema" type="application/ld+json" set:html={JSON.stringify(getFAQSchema(faqs))} />
   <Breadcrumbs items={[
     { name: 'Home', url: '/' },
     { name: 'Username Generator', url: '/username-generator/' },
@@ -34,5 +34,41 @@ document.addEventListener("click",function(e){if(e.target.closest("[data-regener
       <div class="space-y-2" id="username-list"></div>
     </div>
   </GeneratorTool>
-  <script is:inline set:html={script}></script>
+  <script is:inline>
+  (function () {
+    function render() {
+      fetch("/api/usernames.json?count=10").then(function (r) { return r.json(); }).then(function (usernames) {
+        var c = document.getElementById("username-list");
+        if (!c) return;
+        c.innerHTML = "";
+        usernames.forEach(function (u) {
+          var d = document.createElement("div");
+          d.className = "font-mono text-sm text-gray-900 dark:text-gray-100 bg-gray-50 dark:bg-slate-700 rounded-xl px-4 py-2.5";
+          d.textContent = u;
+          c.appendChild(d);
+        });
+      }).catch(function () {});
+    }
+    document.addEventListener("DOMContentLoaded", render);
+    document.addEventListener("click", function (e) { if (e.target.closest("[data-regenerate]")) { render(); } });
+  })();
+  </script>
+
+  <section class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
+    <div class="max-w-3xl mx-auto">
+      <h2 class="text-2xl font-bold text-gray-900 mb-4">About Username Generator</h2>
+      <p class="text-gray-600 leading-relaxed mb-4">Our username generator creates random usernames using multiple style variations including lowercase concatenation (johnsmith), dot-separated (john.smith), underscore-separated (john_smith), and numbered formats (john42). Uses real first and last name combinations for natural-sounding results.</p>
+      <p class="text-gray-600 leading-relaxed mb-4">Perfect for testing user registration systems, generating sample social media profiles, populating test databases with realistic usernames, and any application that needs unique username generation.</p>
+    </div>
+    <div class="mt-12">
+      <h3 class="text-xl font-semibold text-gray-900 mb-6 text-center">Related Tools</h3>
+      <div class="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
+        <ToolCard href="/name-generator/" title="Name Generator" description="Generate random first and last names for US residents." />
+        <ToolCard href="/email-generator/" title="Email Generator" description="Generate random email addresses for testing." />
+        <ToolCard href="/random-person-generator/" title="Random Person Generator" description="Generate complete person profiles with name, address, phone, and email." />
+      </div>
+    </div>
+  </section>
+
+  <FAQs faqs={faqs} />
 </Layout>

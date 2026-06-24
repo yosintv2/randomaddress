@@ -2,23 +2,26 @@
 import Layout from '../../layouts/Layout.astro';
 import AddressCard from '../../components/AddressCard.astro';
 import Breadcrumbs from '../../components/Breadcrumbs.astro';
+import FAQs from '../../components/FAQs.astro';
 import { getZipcodes } from '../../lib/generator';
-import { buildTitle, slugify, SITE_URL } from '../../lib/seo';
+import { buildTitle, slugify, SITE_URL, getFAQSchema, getZipFAQs, getZipContent } from '../../lib/seo';
 
-export function getStaticPaths() {
-  return getZipcodes().map(z => ({
-    params: { zip: z.zip },
-    props: { zipData: z },
-  }));
+const { zip } = Astro.params;
+const zipData = getZipcodes().find(z => z.zip === zip);
+
+if (!zipData) {
+  Astro.redirect('/404');
+  return;
 }
 
-const { zipData } = Astro.props;
 const stateSlug = slugify(zipData.state);
 const citySlug = slugify(zipData.city);
 const title = buildTitle(`Random Address ${zipData.zip} - ${zipData.city}, ${zipData.state} Address Generator`);
 const description = `Generate random addresses for ZIP code ${zipData.zip} (${zipData.city}, ${zipData.state}). Free random address generator for ${zipData.zip}.`;
 const keywords = `${zipData.zip} address, random ${zipData.zip} address, ${zipData.city} ${zipData.state} ZIP code, free ${zipData.zip} address generator`;
+const faqs = getZipFAQs(zipData.zip, zipData.city, zipData.state);
 const canonical = `${SITE_URL}/${stateSlug}/${zipData.zip}/`;
+const zipContent = getZipContent(zipData.zip, zipData.city, zipData.state);
 ---
 
 <Layout title={title} description={description} keywords={keywords} canonical={canonical}>
@@ -35,6 +38,7 @@ const canonical = `${SITE_URL}/${stateSlug}/${zipData.zip}/`;
     description,
     address: { '@type': 'PostalAddress', postalCode: zipData.zip, addressLocality: zipData.city, addressRegion: zipData.state, addressCountry: 'US' },
   })} />
+  <script slot="schema" type="application/ld+json" set:html={JSON.stringify(getFAQSchema(faqs))} />
 
   <section class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
     <div class="text-center mb-8">
@@ -44,4 +48,12 @@ const canonical = `${SITE_URL}/${stateSlug}/${zipData.zip}/`;
 
     <AddressCard zip={zipData.zip} />
   </section>
+
+  <section class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+    <div class="max-w-3xl mx-auto space-y-4 text-gray-600 leading-relaxed">
+      {zipContent.map(p => <p>{p}</p>)}
+    </div>
+  </section>
+
+  <FAQs faqs={faqs} />
 </Layout>

@@ -1,12 +1,13 @@
 ---
 import Layout from '../../layouts/Layout.astro';
 import Breadcrumbs from '../../components/Breadcrumbs.astro';
-import { buildTitle, SITE_URL } from '../../lib/seo';
+import { buildTitle, SITE_URL, getWebPageSchema } from '../../lib/seo';
 const description = 'Privacy policy for Random US Address Generator. Learn how we handle your data, analytics, cookies, and third-party services.';
 const canonical = `${SITE_URL}/privacy-policy/`;
 ---
 
 <Layout title={buildTitle('Privacy Policy')} description={description} canonical={canonical}>
+  <script slot="schema" type="application/ld+json" set:html={JSON.stringify(getWebPageSchema(title, description, canonical))} />
   <Breadcrumbs items={[
     { name: 'Home', url: '/' },
     { name: 'Privacy Policy', url: '/privacy-policy/' },

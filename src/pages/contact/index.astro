@@ -1,29 +1,17 @@
 ---
 import Layout from '../../layouts/Layout.astro';
 import Breadcrumbs from '../../components/Breadcrumbs.astro';
-import { buildTitle, SITE_URL } from '../../lib/seo';
+import { buildTitle, SITE_URL, getContactPageSchema } from '../../lib/seo';
 const description = 'Contact Random US Address Generator. Have questions, suggestions, or feedback? We\'d love to hear from you.';
 const canonical = `${SITE_URL}/contact/`;
 ---
 
 <Layout title={buildTitle('Contact Us')} description={description} canonical={canonical}>
+  <script slot="schema" type="application/ld+json" set:html={JSON.stringify(getContactPageSchema())} />
   <Breadcrumbs items={[
     { name: 'Home', url: '/' },
     { name: 'Contact', url: '/contact/' },
   ]} />
-  <script slot="schema" type="application/ld+json" set:html={JSON.stringify({
-    '@context': 'https://schema.org',
-    '@type': 'ContactPage',
-    name: 'Contact Random US Address Generator',
-    description,
-    url: canonical,
-    contactPoint: {
-      '@type': 'ContactPoint',
-      email: 'contact@randomusaddress.com',
-      contactType: 'customer support',
-      url: canonical,
-    },
-  })} />
   <section class="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
     <div class="text-center mb-12">
       <h1 class="text-3xl lg:text-4xl font-bold text-gray-900 mb-4">Contact Us</h1>

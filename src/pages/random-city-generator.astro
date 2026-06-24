@@ -2,23 +2,53 @@
 import Layout from '../layouts/Layout.astro';
 import GeneratorTool from '../components/GeneratorTool.astro';
 import AddressCard from '../components/AddressCard.astro';
+import ToolCard from '../components/ToolCard.astro';
+import FAQs from '../components/FAQs.astro';
 import Breadcrumbs from '../components/Breadcrumbs.astro';
-import { buildTitle, SITE_URL } from '../lib/seo';
-const title = buildTitle('Random City Generator - Random City Addresses');
+import { buildTitle, SITE_URL, getFAQSchema, getWebPageSchema } from '../lib/seo';
+const title = buildTitle('Random US City Address Generator - Random US City Addresses');
 const description = 'Generate random US addresses from cities across all 50 states. Each click generates an address from a random city with full details.';
 const keywords = 'random city generator, random city address, US city address, all cities address generator, random US city';
 const canonical = `${SITE_URL}/random-city-generator/`;
+const faqs = [
+  { question: 'What is a random city generator?', answer: 'A random city generator creates US addresses from randomly selected cities across all 50 states, giving you geographic variety with every click.' },
+  { question: 'How many cities are supported?', answer: 'Our generator covers hundreds of cities from all 50 US states plus Washington DC and Puerto Rico.' },
+  { question: 'Are the addresses real?', answer: 'No, these are randomly generated addresses using realistic city and street data. They are fictional and for testing only.' },
+  { question: 'Can I generate addresses from specific cities?', answer: 'Yes, visit our Cities page or use state-specific pages to generate addresses for a particular city.' },
+  { question: 'Is this tool free?', answer: 'Yes, the random city generator is completely free to use with no registration required.' },
+  { question: 'What information is included?', answer: 'Each address includes name, street, city, state, ZIP code, phone number, and email.' },
+];
 ---
 
 <Layout title={title} description={description} keywords={keywords} canonical={canonical}>
+  <script slot="schema" type="application/ld+json" set:html={JSON.stringify(getWebPageSchema(title, description, canonical))} />
+  <script slot="schema" type="application/ld+json" set:html={JSON.stringify(getFAQSchema(faqs))} />
   <Breadcrumbs items={[
     { name: 'Home', url: '/' },
-    { name: 'Random City Generator', url: '/random-city-generator/' },
+    { name: 'Random US City Address Generator', url: '/random-city-generator/' },
   ]} />
   <GeneratorTool
-    title="Random City Generator"
+    title="Random US City Address Generator"
     description={description}
   >
     <AddressCard />
   </GeneratorTool>
+
+  <section class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
+    <div class="max-w-3xl mx-auto">
+      <h2 class="text-2xl font-bold text-gray-900 mb-4">About Random US City Address Generator</h2>
+      <p class="text-gray-600 leading-relaxed mb-4">Our random city generator selects from hundreds of US cities across all 50 states to create diverse addresses with every click. Each address is geographically consistent — the city, state, ZIP code, and area code all match for authenticity.</p>
+      <p class="text-gray-600 leading-relaxed mb-4">Perfect for testing applications that need addresses from multiple geographic regions, validating city-state mappings, or exploring addresses from different parts of the United States.</p>
+    </div>
+    <div class="mt-12">
+      <h3 class="text-xl font-semibold text-gray-900 mb-6 text-center">Related Tools</h3>
+      <div class="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
+        <ToolCard href="/random-state-generator/" title="Random US State Address Generator" description="Generate random US state addresses for testing." />
+        <ToolCard href="/random-address-generator/" title="Random US Address Generator" description="Generate random US addresses with complete details." />
+        <ToolCard href="/us-address-generator/" title="US Address Generator" description="Generate random US addresses for testing and development." />
+      </div>
+    </div>
+  </section>
+
+  <FAQs faqs={faqs} />
 </Layout>

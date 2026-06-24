@@ -13,6 +13,16 @@ export interface Address {
   state: string;
   zip: string;
   phone: string;
+  email: string;
+  fullAddress: string;
+}
+
+const emailDomains = ['gmail.com', 'yahoo.com', 'outlook.com', 'hotmail.com', 'aol.com', 'icloud.com', 'protonmail.com'];
+
+function makeEmail(firstName: string, lastName: string): string {
+  const domain = pick(emailDomains);
+  const num = Math.floor(Math.random() * 999);
+  return `${firstName.toLowerCase()}.${lastName.toLowerCase()}${num}@${domain}`;
 }
 
 function pick<T>(arr: T[]): T {
@@ -55,6 +65,7 @@ export function generateAddress(): Address {
   const street = pick(streets);
   const cityData = pick(cities);
   const zipData = pick(zipcodes);
+  const email = makeEmail(firstName, lastName);
 
   return {
     name: `${firstName} ${lastName}`,
@@ -64,6 +75,8 @@ export function generateAddress(): Address {
     state: cityData.state,
     zip: zipData.zip,
     phone: randomPhone(getStateAbbr(zipData.state)),
+    email,
+    fullAddress: `${firstName} ${lastName}, ${streetNum} ${street}, ${cityData.city}, ${cityData.state} ${zipData.zip}`,
   };
 }
 
@@ -77,6 +90,7 @@ export function generateAddressForState(stateName: string): Address {
   const street = pick(streets);
   const cityData = stateCities.length > 0 ? pick(stateCities) : pick(cities);
   const zipData = stateZips.length > 0 ? pick(stateZips) : pick(zipcodes);
+  const email = makeEmail(firstName, lastName);
 
   return {
     name: `${firstName} ${lastName}`,
@@ -86,6 +100,8 @@ export function generateAddressForState(stateName: string): Address {
     state: cityData.state,
     zip: zipData.zip,
     phone: randomPhone(getStateAbbr(stateName)),
+    email,
+    fullAddress: `${firstName} ${lastName}, ${streetNum} ${street}, ${cityData.city}, ${cityData.state} ${zipData.zip}`,
   };
 }
 
@@ -101,6 +117,7 @@ export function generateAddressForCity(cityName: string): Address {
   const streetNum = randomStreetNumber();
   const street = pick(streets);
   const zipData = cityZips.length > 0 ? pick(cityZips) : pick(zipcodes);
+  const email = makeEmail(firstName, lastName);
 
   return {
     name: `${firstName} ${lastName}`,
@@ -110,6 +127,8 @@ export function generateAddressForCity(cityName: string): Address {
     state: cityInfo.state,
     zip: zipData.zip,
     phone: randomPhone(getStateAbbr(cityInfo.state)),
+    email,
+    fullAddress: `${firstName} ${lastName}, ${streetNum} ${street}, ${cityInfo.city}, ${cityInfo.state} ${zipData.zip}`,
   };
 }
 
@@ -120,15 +139,20 @@ export function generateAddressForZip(zip: string): Address {
   const gender = Math.random() > 0.5 ? 'Male' : 'Female';
   const streetNum = randomStreetNumber();
   const street = pick(streets);
+  const email = makeEmail(firstName, lastName);
+  const city = zipData ? zipData.city : 'Unknown';
+  const state = zipData ? zipData.state : 'Unknown';
 
   return {
     name: `${firstName} ${lastName}`,
     gender,
     street: `${streetNum} ${street}`,
-    city: zipData ? zipData.city : 'Unknown',
-    state: zipData ? zipData.state : 'Unknown',
+    city,
+    state,
     zip,
     phone: randomPhone(zipData ? getStateAbbr(zipData.state) : ''),
+    email,
+    fullAddress: `${firstName} ${lastName}, ${streetNum} ${street}, ${city}, ${state} ${zip}`,
   };
 }
 
@@ -140,6 +164,7 @@ export function generatePerson() {
   const zipData = pick(zipcodes);
   const streetNum = randomStreetNumber();
   const street = pick(streets);
+  const email = makeEmail(firstName, lastName);
 
   return {
     name: `${firstName} ${lastName}`,
@@ -152,8 +177,9 @@ export function generatePerson() {
     state: cityData.state,
     zip: zipData.zip,
     phone: randomPhone(getStateAbbr(zipData.state)),
-    email: `${firstName.toLowerCase()}.${lastName.toLowerCase()}@example.com`,
+    email,
     username: `${firstName.toLowerCase()}${lastName.toLowerCase()}${Math.floor(Math.random() * 100)}`,
+    fullAddress: `${firstName} ${lastName}, ${streetNum} ${street}, ${cityData.city}, ${cityData.state} ${zipData.zip}`,
   };
 }
 

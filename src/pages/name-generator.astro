@@ -1,27 +1,27 @@
 ---
 import Layout from '../layouts/Layout.astro';
 import GeneratorTool from '../components/GeneratorTool.astro';
+import ToolCard from '../components/ToolCard.astro';
+import FAQs from '../components/FAQs.astro';
 import Breadcrumbs from '../components/Breadcrumbs.astro';
-import firstNames from '../data/firstNames.json';
-import lastNames from '../data/lastNames.json';
-import { buildTitle, SITE_URL } from '../lib/seo';
+import { buildTitle, SITE_URL, getFAQSchema, getWebPageSchema } from '../lib/seo';
 const title = buildTitle('Name Generator - Random Names');
 const description = 'Generate random first and last names for US residents. Perfect for testing and development.';
 const keywords = 'name generator, random name generator, random names, US name generator, test names';
 const canonical = `${SITE_URL}/name-generator/`;
-
-const dataJson = JSON.stringify({ firstNames, lastNames });
-const script = `(function(){
-var D=${dataJson};
-function p(a){return a[Math.floor(Math.random()*a.length)]}
-function gen(n){var r=[];for(var i=0;i<n;i++){var fn=p(D.firstNames),ln=p(D.lastNames);r.push({name:fn+" "+ln,gender:Math.random()>0.5?"Male":"Female"})}return r}
-function render(){var names=gen(10);var c=document.getElementById("name-list");if(!c)return;c.innerHTML="";names.forEach(function(n){var d=document.createElement("div");d.className="flex items-center justify-between bg-gray-50 dark:bg-slate-700 rounded-xl px-4 py-2.5";d.innerHTML='<span class="font-medium text-gray-900 dark:text-gray-100">'+n.name+'</span><span class="text-xs text-gray-400 bg-white dark:bg-slate-600 px-2 py-1 rounded">'+n.gender+'</span>';c.appendChild(d)})}
-document.addEventListener("DOMContentLoaded",render);
-document.addEventListener("click",function(e){if(e.target.closest("[data-regenerate]")){render()}});
-})();`;
+const faqs = [
+  { question: 'What is a name generator?', answer: 'A name generator creates random first and last name combinations from datasets of real US names for testing, development, and creative projects.' },
+  { question: 'Are these real names?', answer: 'The names are randomly combined from datasets of real US first and last names, but each combination is unique and does not represent a real person.' },
+  { question: 'How many names are generated at once?', answer: 'The generator produces ten names at a time with a mix of male and female names.' },
+  { question: 'Can I use these names for testing?', answer: 'Yes, these names are perfect for testing user registration forms, populating databases, and creating sample data.' },
+  { question: 'Is this tool free?', answer: 'Yes, our name generator is completely free to use with no registration required.' },
+  { question: 'What name formats are included?', answer: 'Each entry includes a full name (first and last) and a gender designation.' },
+];
 ---
 
 <Layout title={title} description={description} keywords={keywords} canonical={canonical}>
+  <script slot="schema" type="application/ld+json" set:html={JSON.stringify(getWebPageSchema(title, description, canonical))} />
+  <script slot="schema" type="application/ld+json" set:html={JSON.stringify(getFAQSchema(faqs))} />
   <Breadcrumbs items={[
     { name: 'Home', url: '/' },
     { name: 'Name Generator', url: '/name-generator/' },
@@ -35,5 +35,41 @@ document.addEventListener("click",function(e){if(e.target.closest("[data-regener
       </div>
     </div>
   </GeneratorTool>
-  <script is:inline set:html={script}></script>
+  <script is:inline>
+  (function () {
+    function render() {
+      fetch("/api/names.json?count=10").then(function (r) { return r.json(); }).then(function (names) {
+        var c = document.getElementById("name-list");
+        if (!c) return;
+        c.innerHTML = "";
+        names.forEach(function (n) {
+          var d = document.createElement("div");
+          d.className = "flex items-center justify-between bg-gray-50 dark:bg-slate-700 rounded-xl px-4 py-2.5";
+          d.innerHTML = '<span class="font-medium text-gray-900 dark:text-gray-100">' + n.name + '</span><span class="text-xs text-gray-400 bg-white dark:bg-slate-600 px-2 py-1 rounded">' + n.gender + '</span>';
+          c.appendChild(d);
+        });
+      }).catch(function () {});
+    }
+    document.addEventListener("DOMContentLoaded", render);
+    document.addEventListener("click", function (e) { if (e.target.closest("[data-regenerate]")) { render(); } });
+  })();
+  </script>
+
+  <section class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
+    <div class="max-w-3xl mx-auto">
+      <h2 class="text-2xl font-bold text-gray-900 mb-4">About Name Generator</h2>
+      <p class="text-gray-600 leading-relaxed mb-4">Our name generator creates random first and last name combinations from a dataset of real US names. Each name includes a gender designation. Use it to generate test data for user profiles, populate demo databases, create sample customer records, or brainstorm character names.</p>
+      <p class="text-gray-600 leading-relaxed mb-4">The generator produces ten names at a time with a mix of male and female names. Click Generate New for a fresh set of random name combinations.</p>
+    </div>
+    <div class="mt-12">
+      <h3 class="text-xl font-semibold text-gray-900 mb-6 text-center">Related Tools</h3>
+      <div class="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
+        <ToolCard href="/random-person-generator/" title="Random Person Generator" description="Generate complete person profiles with name, address, phone, and email." />
+        <ToolCard href="/email-generator/" title="Email Generator" description="Generate random email addresses for testing." />
+        <ToolCard href="/username-generator/" title="Username Generator" description="Generate random usernames for testing and online profiles." />
+      </div>
+    </div>
+  </section>
+
+  <FAQs faqs={faqs} />
 </Layout>

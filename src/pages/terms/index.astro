@@ -1,12 +1,13 @@
 ---
 import Layout from '../../layouts/Layout.astro';
 import Breadcrumbs from '../../components/Breadcrumbs.astro';
-import { buildTitle, SITE_URL } from '../../lib/seo';
+import { buildTitle, SITE_URL, getWebPageSchema } from '../../lib/seo';
 const description = 'Terms of service for Random US Address Generator. Please read these terms carefully before using our service.';
 const canonical = `${SITE_URL}/terms/`;
 ---
 
 <Layout title={buildTitle('Terms of Service')} description={description} canonical={canonical}>
+  <script slot="schema" type="application/ld+json" set:html={JSON.stringify(getWebPageSchema(title, description, canonical))} />
   <Breadcrumbs items={[
     { name: 'Home', url: '/' },
     { name: 'Terms of Service', url: '/terms/' },

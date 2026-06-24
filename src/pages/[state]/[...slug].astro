@@ -2,37 +2,34 @@
 import Layout from '../../layouts/Layout.astro';
 import AddressCard from '../../components/AddressCard.astro';
 import Breadcrumbs from '../../components/Breadcrumbs.astro';
+import FAQs from '../../components/FAQs.astro';
 import { getCities, getStates, getZipcodes } from '../../lib/generator';
-import { buildTitle, slugify, SITE_URL } from '../../lib/seo';
+import { buildTitle, slugify, SITE_URL, getFAQSchema, getStateFAQs, getCityFAQs, getZipFAQs, getStateContent, getCityContent, getZipContent } from '../../lib/seo';
 
-export function getStaticPaths() {
-  const paths: { params: { state: string; slug: string }; props: { type: 'city' | 'zip'; cityName?: string; stateName?: string; zipData?: { zip: string; city: string; state: string } } }[] = [];
-  const seenCities = new Set<string>();
+const { state: stateSlug, slug } = Astro.params;
 
-  for (const c of getCities()) {
-    const stateSlug = slugify(c.state);
-    const citySlug = slugify(c.city);
-    const key = `${stateSlug}/${citySlug}`;
-    if (seenCities.has(key)) continue;
-    seenCities.add(key);
-    paths.push({
-      params: { state: stateSlug, slug: citySlug },
-      props: { type: 'city' as const, cityName: c.city, stateName: c.state },
-    });
-  }
+const allStates = getStates();
+const state = allStates.find(s => slugify(s.name) === stateSlug);
 
-  for (const z of getZipcodes()) {
-    const stateSlug = slugify(z.state);
-    paths.push({
-      params: { state: stateSlug, slug: z.zip },
-      props: { type: 'zip' as const, zipData: z },
-    });
-  }
-
-  return paths;
+if (!state) {
+  Astro.redirect('/404');
+  return;
 }
 
-const { type, cityName, stateName, zipData } = Astro.props;
+const isZip = /^\d{5}$/.test(slug || '');
+let type: 'city' | 'zip';
+let cityName: string | undefined;
+let zipData: { zip: string; city: string; state: string } | undefined;
+
+if (isZip) {
+  zipData = getZipcodes().find(z => z.zip === slug);
+  type = zipData ? 'zip' : 'city';
+  cityName = zipData ? zipData.city : '';
+} else {
+  type = 'city';
+  const cityEntry = getCities().find(c => slugify(c.city) === slug && c.state === state.name);
+  cityName = cityEntry ? cityEntry.city : slug || '';
+}
 
 let title: string;
 let description: string;
@@ -42,28 +39,26 @@ let canonical: string;
 let breadcrumbs: { name: string; url: string }[];
 let placeSchema: Record<string, unknown>;
 
-if (type === 'city' && cityName && stateName) {
-  const citySlug = slugify(cityName);
-  const stateSlug = slugify(stateName);
-  title = buildTitle(`${cityName}, ${stateName} Address Generator - Random ${cityName} Addresses`);
-  description = `Generate random addresses for ${cityName}, ${stateName}. Free random address generator with ZIP codes and phone numbers.`;
-  heading = `${cityName}, ${stateName} Address Generator`;
-  keywords = `${cityName} ${stateName} address, random ${cityName} address, ${cityName} generator, ${stateName} test data`;
-  canonical = `${SITE_URL}/${stateSlug}/${citySlug}/`;
+if (type === 'city') {
+  const resolvedCity = cityName || '';
+  title = buildTitle(`${resolvedCity}, ${state.name} Address Generator - Random ${resolvedCity} Addresses`);
+  description = `Generate random addresses for ${resolvedCity}, ${state.name}. Free random address generator with ZIP codes and phone numbers.`;
+  heading = `${resolvedCity}, ${state.name} Address Generator`;
+  keywords = `${resolvedCity} ${state.name} address, random ${resolvedCity} address, ${state.name} test data`;
+  canonical = `${SITE_URL}/${stateSlug}/${slug}/`;
   breadcrumbs = [
     { name: 'Home', url: '/' },
-    { name: stateName, url: `/states/${stateSlug}/` },
-    { name: cityName, url: `/${stateSlug}/${citySlug}/` },
+    { name: state.name, url: `/states/${stateSlug}/` },
+    { name: resolvedCity, url: `/${stateSlug}/${slug}/` },
   ];
   placeSchema = {
     '@context': 'https://schema.org',
     '@type': 'Place',
-    name: `${cityName}, ${stateName} Address Generator`,
+    name: `${resolvedCity}, ${state.name} Address Generator`,
     description,
-    address: { '@type': 'PostalAddress', addressLocality: cityName, addressRegion: stateName, addressCountry: 'US' },
+    address: { '@type': 'PostalAddress', addressLocality: resolvedCity, addressRegion: state.name, addressCountry: 'US' },
   };
-} else if (type === 'zip' && zipData) {
-  const stateSlug = slugify(zipData.state);
+} else if (zipData) {
   title = buildTitle(`Address ${zipData.zip}, ${zipData.state} - Random ${zipData.zip} Address`);
   description = `Generate random addresses for ZIP code ${zipData.zip} in ${zipData.state}. Free random address generator.`;
   heading = `Address ${zipData.zip}, ${zipData.state}`;
@@ -82,26 +77,54 @@ if (type === 'city' && cityName && stateName) {
     address: { '@type': 'PostalAddress', postalCode: zipData.zip, addressLocality: zipData.city, addressRegion: zipData.state, addressCountry: 'US' },
   };
 } else {
-  title = buildTitle('Address Generator');
-  description = 'Generate random US addresses.';
-  heading = 'Address Generator';
-  keywords = 'US address generator, random address, test address';
-  canonical = `${SITE_URL}/`;
-  breadcrumbs = [{ name: 'Home', url: '/' }];
-  placeSchema = {};
+  title = buildTitle(`${state.name} Address Generator - Random ${state.name} Addresses`);
+  description = `Generate random ${state.name} addresses with real cities, ZIP codes, and phone numbers.`;
+  heading = `${state.name} Address Generator`;
+  keywords = `${state.name} address generator, random ${state.name} address`;
+  canonical = `${SITE_URL}/${stateSlug}/`;
+  breadcrumbs = [
+    { name: 'Home', url: '/' },
+    { name: state.name, url: `/states/${stateSlug}/` },
+  ];
+  placeSchema = {
+    '@context': 'https://schema.org',
+    '@type': 'Place',
+    name: `${state.name} Address Generator`,
+    description,
+    address: { '@type': 'PostalAddress', addressRegion: state.name, addressCountry: 'US' },
+  };
 }
 
-const cardState = type === 'city' ? stateName : zipData ? zipData.state : '';
+let faqs: { question: string; answer: string }[];
+if (type === 'city') {
+  faqs = getCityFAQs(cityName || '', state.name);
+} else if (zipData) {
+  faqs = getZipFAQs(zipData.zip, zipData.city, zipData.state);
+} else {
+  faqs = getStateFAQs(state.name);
+}
+
+const cardState = zipData ? zipData.state : state.name;
 const cardCity = type === 'city' ? cityName : '';
-const cardZip = type === 'zip' ? zipData.zip : '';
+const cardZip = zipData ? zipData.zip : '';
+
+let contentParagraphs: string[];
+if (type === 'city') {
+  const cityZipCount = getZipcodes().filter(z => z.city === cityName).length;
+  contentParagraphs = getCityContent(cityName || '', state.name, cityZipCount);
+} else if (zipData) {
+  contentParagraphs = getZipContent(zipData.zip, zipData.city, zipData.state);
+} else {
+  const stateCitiesList = getCities().filter(c => c.state === state.name).map(c => c.city);
+  contentParagraphs = getStateContent(state.name, [...new Set(stateCitiesList)]);
+}
 ---
 
 <Layout title={title} description={description} keywords={keywords} canonical={canonical}>
   <Breadcrumbs items={breadcrumbs} />
 
-  {placeSchema['@type'] && (
-    <script slot="schema" type="application/ld+json" set:html={JSON.stringify(placeSchema)} />
-  )}
+  <script slot="schema" type="application/ld+json" set:html={JSON.stringify(placeSchema)} />
+  <script slot="schema" type="application/ld+json" set:html={JSON.stringify(getFAQSchema(faqs))} />
 
   <section class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
     <div class="text-center mb-8">
@@ -111,4 +134,12 @@ const cardZip = type === 'zip' ? zipData.zip : '';
 
     <AddressCard state={cardState} city={cardCity} zip={cardZip} />
   </section>
+
+  <section class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+    <div class="max-w-3xl mx-auto space-y-4 text-gray-600 leading-relaxed">
+      {contentParagraphs.map(p => <p>{p}</p>)}
+    </div>
+  </section>
+
+  <FAQs faqs={faqs} />
 </Layout>

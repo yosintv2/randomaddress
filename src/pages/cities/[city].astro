@@ -2,29 +2,33 @@
 import Layout from '../../layouts/Layout.astro';
 import AddressCard from '../../components/AddressCard.astro';
 import Breadcrumbs from '../../components/Breadcrumbs.astro';
-import { getCities } from '../../lib/generator';
-import { buildTitle, slugify, SITE_URL } from '../../lib/seo';
+import FAQs from '../../components/FAQs.astro';
+import { getCities, getZipcodes } from '../../lib/generator';
+import { buildTitle, slugify, SITE_URL, getFAQSchema, getCityFAQs, getCityContent } from '../../lib/seo';
 
-export function getStaticPaths() {
-  const seen = new Set<string>();
-  return getCities().filter(c => {
-    const key = slugify(c.city);
-    if (seen.has(key)) return false;
-    seen.add(key);
-    return true;
-  }).map(c => ({
-    params: { city: slugify(c.city) },
-    props: { cityData: c },
-  }));
+const { city: citySlug } = Astro.params;
+const seen = new Set<string>();
+const uniqueCities = getCities().filter(c => {
+  const key = slugify(c.city);
+  if (seen.has(key)) return false;
+  seen.add(key);
+  return true;
+});
+const cityData = uniqueCities.find(c => slugify(c.city) === citySlug);
+
+if (!cityData) {
+  Astro.redirect('/404');
+  return;
 }
 
-const { cityData } = Astro.props;
-const citySlug = slugify(cityData.city);
 const stateSlug = slugify(cityData.state);
 const title = buildTitle(`${cityData.city}, ${cityData.state} Address Generator - Random ${cityData.city} Addresses`);
 const description = `Generate random ${cityData.city}, ${cityData.state} addresses with ZIP codes and phone numbers. Free ${cityData.city} address generator for testing.`;
 const keywords = `${cityData.city} address generator, random ${cityData.city} address, ${cityData.city} ${cityData.state} ZIP codes, free ${cityData.city} test data`;
+const faqs = getCityFAQs(cityData.city, cityData.state);
 const canonical = `${SITE_URL}/${stateSlug}/${citySlug}/`;
+const cityZipCount = getZipcodes().filter(z => z.city === cityData.city).length;
+const cityContent = getCityContent(cityData.city, cityData.state, cityZipCount);
 ---
 
 <Layout title={title} description={description} keywords={keywords} canonical={canonical}>
@@ -41,6 +45,7 @@ const canonical = `${SITE_URL}/${stateSlug}/${citySlug}/`;
     description,
     address: { '@type': 'PostalAddress', addressLocality: cityData.city, addressRegion: cityData.state, addressCountry: 'US' },
   })} />
+  <script slot="schema" type="application/ld+json" set:html={JSON.stringify(getFAQSchema(faqs))} />
 
   <section class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
     <div class="text-center mb-8">
@@ -50,4 +55,12 @@ const canonical = `${SITE_URL}/${stateSlug}/${citySlug}/`;
 
     <AddressCard state={cityData.state} city={cityData.city} />
   </section>
+
+  <section class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+    <div class="max-w-3xl mx-auto space-y-4 text-gray-600 leading-relaxed">
+      {cityContent.map(p => <p>{p}</p>)}
+    </div>
+  </section>
+
+  <FAQs faqs={faqs} />
 </Layout>
