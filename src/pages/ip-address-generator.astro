@@ -14,7 +14,7 @@ const faqs = [
   { question: 'Are these real IP addresses?', answer: 'These are randomly generated IP addresses using common US IP prefixes. They are not connected to any real device or network.' },
   { question: 'What IP versions are generated?', answer: 'The generator produces IPv4 addresses with realistic US-based prefixes.' },
   { question: 'Can I use these for testing?', answer: 'Yes, these IP addresses are perfect for testing network applications, security tools, and populating databases.' },
-  { question: 'How many IPs are generated at once?', answer: 'The generator produces ten IP addresses at a time.' },
+  { question: 'How many IPs are generated at once?', answer: 'The generator produces 200 IP addresses at a time with a single click.' },
   { question: 'Is this tool free?', answer: 'Yes, our IP address generator is completely free to use with no registration required.' },
 ];
 ---
@@ -34,23 +34,63 @@ const faqs = [
       <div class="space-y-2" id="ip-list"></div>
     </div>
   </GeneratorTool>
+  <div class="flex justify-end mb-3">
+    <button id="copy-all-ips" class="btn-secondary text-sm px-4 py-2 min-h-[44px]">
+      <svg class="w-4 h-4 inline-block mr-1.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 5H6a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2v-1M8 5a2 2 0 002 2h2a2 2 0 002-2M8 5a2 2 0 012-2h2a2 2 0 012 2m0 0h2a2 2 0 012 2v3m2 4H10m0 0l3-3m-3 3l3 3"/>
+      </svg>
+      Copy All
+    </button>
+  </div>
   <script is:inline>
   (function () {
+    function showToast(msg) {
+      var d = document.getElementById("toast");
+      if (!d) {
+        d = document.createElement("div");
+        d.id = "toast";
+        d.className = "fixed bottom-24 left-1/2 -translate-x-1/2 z-50 bg-gray-900 text-white text-sm font-medium px-5 py-3 rounded-xl shadow-2xl animate-slide-up";
+        document.body.appendChild(d);
+      }
+      d.textContent = msg;
+      d.style.animation = "slideUp 0.3s ease-out";
+      setTimeout(function () {
+        d.style.animation = "toastOut 0.3s ease-out forwards";
+        setTimeout(function () { if (d && d.parentNode) d.parentNode.removeChild(d); }, 300);
+      }, 2000);
+    }
     function render() {
       fetch("/api/ips.json?count=200").then(function (r) { return r.json(); }).then(function (ips) {
         var c = document.getElementById("ip-list");
         if (!c) return;
         c.innerHTML = "";
-        ips.forEach(function (ip) {
+        ips.forEach(function (ip, i) {
+          var w = document.createElement("div");
+          w.className = "flex items-center gap-2 group";
           var d = document.createElement("div");
-          d.className = "font-mono text-sm text-gray-900 dark:text-gray-100 bg-gray-50 dark:bg-slate-700 rounded-xl px-4 py-2.5";
+          d.className = "flex-1 font-mono text-sm text-gray-900 dark:text-gray-100 bg-gray-50 dark:bg-slate-700 rounded-xl px-4 py-2.5 truncate";
           d.textContent = ip;
-          c.appendChild(d);
+          var btn = document.createElement("button");
+          btn.className = "shrink-0 p-2.5 rounded-lg bg-gray-100 dark:bg-slate-600 hover:bg-gray-200 dark:hover:bg-slate-500 text-gray-500 dark:text-gray-300 transition-colors min-h-[44px] min-w-[44px]";
+          btn.setAttribute("aria-label", "Copy " + ip);
+          btn.innerHTML = '<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 5H6a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2v-1M8 5a2 2 0 002 2h2a2 2 0 002-2M8 5a2 2 0 012-2h2a2 2 0 012 2m0 0h2a2 2 0 012 2v3m2 4H10m0 0l3-3m-3 3l3 3"/></svg>';
+          btn.addEventListener("click", function () {
+            navigator.clipboard.writeText(ip).then(function () { showToast("Copied " + ip); }).catch(function () {});
+          });
+          w.appendChild(d);
+          w.appendChild(btn);
+          c.appendChild(w);
         });
       }).catch(function () {});
     }
     document.addEventListener("DOMContentLoaded", render);
     document.addEventListener("click", function (e) { if (e.target.closest("[data-regenerate]")) { render(); } });
+    document.getElementById("copy-all-ips")?.addEventListener("click", function () {
+      var items = document.querySelectorAll("#ip-list .font-mono");
+      var text = Array.from(items).map(function (el) { return el.textContent; }).join("\n");
+      if (!text) return;
+      navigator.clipboard.writeText(text).then(function () { showToast("Copied all IPs!"); }).catch(function () {});
+    });
   })();
   </script>
 
