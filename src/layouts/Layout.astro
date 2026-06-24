@@ -52,7 +52,7 @@ const {
     <a href="#main-content" class="skip-to-content">Skip to main content</a>
 
     <!-- Dark Mode Init -->
-    <script is:inline>(function(){try{var t=localStorage.getItem('theme');if(t==='dark'||(!t&&window.matchMedia('(prefers-color-scheme:dark)').matches)){document.documentElement.classList.add('dark')}}catch(e){}})();</script>
+    <script is:inline>(function(){try{var t=localStorage.getItem('theme');if(t==='dark'){document.documentElement.classList.add('dark')}}catch(e){}})();</script>
 
     <header class="sticky top-0 z-50 glass border-b border-gray-200/50">
       <nav class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">

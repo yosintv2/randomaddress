@@ -3,3 +3,5 @@
 
 # Canonical redirects: flat city/ZIP pages redirect to hierarchical
 # /cities/* and /zip-codes/* kept live with canonical tags instead of redirects
+
+/sitemap.xml  /sitemap-index.xml  301
