@@ -1,8 +1,9 @@
 ---
 import Layout from '../../layouts/Layout.astro';
 import AddressCard from '../../components/AddressCard.astro';
+import Breadcrumbs from '../../components/Breadcrumbs.astro';
 import { getCities } from '../../lib/generator';
-import { buildTitle, slugify } from '../../lib/seo';
+import { buildTitle, slugify, SITE_URL } from '../../lib/seo';
 
 export function getStaticPaths() {
   const seen = new Set<string>();
@@ -18,20 +19,38 @@ export function getStaticPaths() {
 }
 
 const { cityData } = Astro.props;
-const title = buildTitle(`${cityData.city} Address Generator - Random ${cityData.city} Addresses`);
-const description = `Generate random ${cityData.city}, ${cityData.state} addresses. Free ${cityData.city} random address generator with ZIP codes and phone numbers.`;
+const citySlug = slugify(cityData.city);
+const stateSlug = slugify(cityData.state);
+const title = buildTitle(`${cityData.city}, ${cityData.state} Address Generator - Random ${cityData.city} Addresses`);
+const description = `Generate random ${cityData.city}, ${cityData.state} addresses with ZIP codes and phone numbers. Free ${cityData.city} address generator for testing.`;
+const keywords = `${cityData.city} address generator, random ${cityData.city} address, ${cityData.city} ${cityData.state} ZIP codes, free ${cityData.city} test data`;
+const canonical = `${SITE_URL}/cities/${citySlug}/`;
 ---
 
-<Layout title={title} description={description}>
-  <section class="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+<Layout title={title} description={description} keywords={keywords} canonical={canonical}>
+  <Breadcrumbs items={[
+    { name: 'Home', url: '/' },
+    { name: cityData.state, url: `/states/${stateSlug}/` },
+    { name: cityData.city, url: `/cities/${citySlug}/` },
+  ]} />
+
+  <script slot="schema" type="application/ld+json" set:html={JSON.stringify({
+    '@context': 'https://schema.org',
+    '@type': 'Place',
+    name: `${cityData.city} Address Generator`,
+    description,
+    address: { '@type': 'PostalAddress', addressLocality: cityData.city, addressRegion: cityData.state, addressCountry: 'US' },
+  })} />
+
+  <section class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
     <div class="text-center mb-8">
-      <h1 class="text-3xl font-bold text-gray-900 mb-3">{cityData.city} Address Generator</h1>
-      <p class="text-gray-600">Generate random addresses for {cityData.city}, {cityData.state}. Including streets, ZIP codes, and phone numbers.</p>
+      <h1 class="text-3xl lg:text-4xl font-bold text-gray-900 mb-3">{cityData.city}, {cityData.state} Address Generator</h1>
+      <p class="text-lg text-gray-600 max-w-2xl mx-auto">Generate random addresses for {cityData.city}, {cityData.state}. Including streets, ZIP codes, and phone numbers.</p>
     </div>
 
     <AddressCard />
 
-    <div class="mt-8 text-center">
+    <div class="mt-6 text-center">
       <a href={Astro.url.pathname} class="inline-block bg-blue-600 text-white px-6 py-3 rounded-lg font-medium hover:bg-blue-700 transition">
         Generate Another {cityData.city} Address
       </a>

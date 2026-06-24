@@ -1,16 +1,25 @@
 ---
 import Layout from '../layouts/Layout.astro';
 import GeneratorTool from '../components/GeneratorTool.astro';
+import Breadcrumbs from '../components/Breadcrumbs.astro';
 import { generatePerson } from '../lib/generator';
-import { buildTitle } from '../lib/seo';
+import { buildTitle, SITE_URL } from '../lib/seo';
+const title = buildTitle('Name Generator - Random Names');
+const description = 'Generate random first and last names for US residents. Perfect for testing and development.';
+const keywords = 'name generator, random name generator, random names, US name generator, test names';
+const canonical = `${SITE_URL}/name-generator/`;
 
 const people = Array.from({ length: 10 }, () => generatePerson());
 ---
 
-<Layout title={buildTitle('Name Generator - Random Names')}>
+<Layout title={title} description={description} keywords={keywords} canonical={canonical}>
+  <Breadcrumbs items={[
+    { name: 'Home', url: '/' },
+    { name: 'Name Generator', url: '/name-generator/' },
+  ]} />
   <GeneratorTool
     title="Name Generator"
-    description="Generate random first and last names for US residents. Perfect for testing and development."
+    description={description}
   >
     <div class="glass-card rounded-2xl p-6 sm:p-8 fade-in">
       <div class="space-y-2">

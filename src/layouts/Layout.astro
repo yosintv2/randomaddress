@@ -1,15 +1,26 @@
 ---
 import '../styles/global.css';
-import { SITE_NAME, SITE_URL, DEFAULT_DESCRIPTION } from '../lib/seo';
+import { SITE_NAME, SITE_BRAND, SITE_URL, DEFAULT_DESCRIPTION } from '../lib/seo';
 
 export interface Props {
   title: string;
   description?: string;
   canonical?: string;
+  keywords?: string;
+  ogImage?: string;
+  ogType?: string;
   noindex?: boolean;
 }
 
-const { title, description = DEFAULT_DESCRIPTION, canonical, noindex } = Astro.props;
+const {
+  title,
+  description = DEFAULT_DESCRIPTION,
+  canonical,
+  keywords,
+  ogImage = '/favicon.svg',
+  ogType = 'website',
+  noindex,
+} = Astro.props;
 ---
 
 <!DOCTYPE html>
@@ -21,6 +32,16 @@ const { title, description = DEFAULT_DESCRIPTION, canonical, noindex } = Astro.p
     <meta name="description" content={description} />
     <link rel="canonical" href={canonical || SITE_URL} />
     {noindex && <meta name="robots" content="noindex" />}
+    {keywords && <meta name="keywords" content={keywords} />}
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={description} />
+    <meta property="og:url" content={canonical || SITE_URL} />
+    <meta property="og:type" content={ogType} />
+    <meta property="og:image" content={`${SITE_URL}${ogImage}`} />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content={title} />
+    <meta name="twitter:description" content={description} />
+    <meta name="twitter:image" content={`${SITE_URL}${ogImage}`} />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <slot name="schema" />
   </head>
@@ -31,7 +52,7 @@ const { title, description = DEFAULT_DESCRIPTION, canonical, noindex } = Astro.p
           <div class="w-9 h-9 rounded-xl gradient-bg flex items-center justify-center shadow-lg shadow-brand-500/20 group-hover:shadow-brand-500/30 transition-shadow">
             <span class="text-white font-bold text-sm">US</span>
           </div>
-          <span class="text-lg font-bold gradient-text">{SITE_NAME}</span>
+          <span class="text-lg font-bold gradient-text">{SITE_BRAND}</span>
         </a>
         <div class="hidden md:flex items-center gap-1">
           <a href="/random-address-generator/" class="btn-ghost">Address Generator</a>

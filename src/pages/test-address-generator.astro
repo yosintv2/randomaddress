@@ -2,13 +2,22 @@
 import Layout from '../layouts/Layout.astro';
 import GeneratorTool from '../components/GeneratorTool.astro';
 import AddressCard from '../components/AddressCard.astro';
-import { buildTitle } from '../lib/seo';
+import Breadcrumbs from '../components/Breadcrumbs.astro';
+import { buildTitle, SITE_URL } from '../lib/seo';
+const title = buildTitle('Test Address Generator - Random USA Addresses');
+const description = 'Create random USA addresses for testing and development. Generate realistic addresses with names, phone numbers, and email.';
+const keywords = 'test address generator, random USA address, test data generator, fake address for testing, development test data';
+const canonical = `${SITE_URL}/test-address-generator/`;
 ---
 
-<Layout title={buildTitle('Test Address Generator - Random USA Addresses')}>
+<Layout title={title} description={description} keywords={keywords} canonical={canonical}>
+  <Breadcrumbs items={[
+    { name: 'Home', url: '/' },
+    { name: 'Test Address Generator', url: '/test-address-generator/' },
+  ]} />
   <GeneratorTool
     title="Test Address Generator"
-    description="Create random USA addresses for testing and development. Generate realistic addresses with names and phone numbers."
+    description={description}
   >
     <AddressCard />
   </GeneratorTool>

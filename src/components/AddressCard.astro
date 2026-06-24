@@ -14,8 +14,10 @@ function pick(a){return a[Math.floor(Math.random()*a.length)]}
 const AC={CA:'213',TX:'713',NY:'212',FL:'305',IL:'312',PA:'215',OH:'614',GA:'404',NC:'704',MI:'313',NJ:'201',VA:'703',WA:'206',AZ:'602',MA:'617',TN:'615',IN:'317',MO:'314',MD:'301',WI:'414',CO:'303',MN:'612',SC:'803',AL:'205',LA:'504',KY:'502',OR:'503',OK:'405',CT:'203',IA:'515',MS:'601',AR:'501',KS:'913',UT:'801',NV:'702',NM:'505',WV:'304',NE:'402',ID:'208',HI:'808',ME:'207',NH:'603',RI:'401',MT:'406',DE:'302',SD:'605',ND:'701',AK:'907',VT:'802',WY:'307'};
 function gp(a){const c=AC[a]||'555';return '('+c+')'+String(Math.floor(Math.random()*900)+100)+'-'+String(Math.floor(Math.random()*9000)+1000)}
 function gsa(n){const s=DATA.states.find(function(s){return s.name===n});return s?s.abbr:''}
-function gen(){const fn=pick(DATA.firstNames),ln=pick(DATA.lastNames),g=Math.random()>0.5?'Male':'Female',sn=String(Math.floor(Math.random()*9999)+1),s=pick(DATA.streets),cd=pick(DATA.cities),zd=pick(DATA.zipcodes),sa=gsa(cd.state);return{name:fn+' '+ln,gender:g,street:sn+' '+s,city:cd.city,state:cd.state,zip:zd.zip,phone:gp(sa)}}
-function rn(a){document.querySelectorAll('[data-field]').forEach(function(e){e.textContent=a[e.getAttribute('data-field')]});var b=document.querySelector('[data-copy]');if(b){b.setAttribute('data-address',a.name+', '+a.street+', '+a.city+', '+a.state+' '+a.zip)}}
+const DM=['gmail.com','yahoo.com','outlook.com','hotmail.com','aol.com','icloud.com','protonmail.com'];
+function ge(fn,ln){return fn.toLowerCase()+'.'+ln.toLowerCase()+Math.floor(Math.random()*999)+'@'+pick(DM)}
+function gen(){const fn=pick(DATA.firstNames),ln=pick(DATA.lastNames),g=Math.random()>0.5?'Male':'Female',sn=String(Math.floor(Math.random()*9999)+1),s=pick(DATA.streets),cd=pick(DATA.cities),zd=pick(DATA.zipcodes),sa=gsa(cd.state);return{name:fn+' '+ln,gender:g,street:sn+' '+s,city:cd.city,state:cd.state,zip:zd.zip,phone:gp(sa),email:ge(fn,ln)}}
+function rn(a){document.querySelectorAll('[data-field]').forEach(function(e){e.textContent=a[e.getAttribute('data-field')]});var b=document.querySelector('[data-copy]');if(b){b.setAttribute('data-address',a.name+', '+a.street+', '+a.city+', '+a.state+' '+a.zip+', Email: '+a.email)}}
 document.addEventListener('DOMContentLoaded',function(){rn(gen())});
 document.addEventListener('click',function(e){var b=e.target.closest('[data-regenerate]');if(b){rn(gen())}});
 document.addEventListener('click',function(e){var b=e.target.closest('[data-copy]');if(!b)return;var t=b.getAttribute('data-address')||'';navigator.clipboard.writeText(t).then(function(){var o=b.innerHTML;b.innerHTML='<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg> Copied!';setTimeout(function(){b.innerHTML=o},2000)})});
@@ -63,6 +65,10 @@ document.addEventListener('click',function(e){var b=e.target.closest('[data-copy
     <div>
       <span class="text-xs font-medium uppercase tracking-wider text-gray-400">Phone</span>
       <p class="mt-1 font-mono font-semibold text-gray-900" data-field="phone"></p>
+    </div>
+    <div class="col-span-2">
+      <span class="text-xs font-medium uppercase tracking-wider text-gray-400">Email</span>
+      <p class="mt-1 font-mono text-sm text-gray-900" data-field="email"></p>
     </div>
   </div>
 

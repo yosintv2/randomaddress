@@ -1,21 +1,34 @@
 ---
 import Layout from '../../layouts/Layout.astro';
-import { buildTitle } from '../../lib/seo';
+import Breadcrumbs from '../../components/Breadcrumbs.astro';
+import { buildTitle, SITE_URL } from '../../lib/seo';
 import { articles } from '../../lib/blog';
+const description = 'Blog articles about random US address generation, ZIP codes, US states, testing data, and more. Learn how to generate and use random addresses.';
+const keywords = 'random address blog, US address guide, ZIP code guide, test data blog, address generator tips';
+const canonical = `${SITE_URL}/blog/`;
 ---
 
-<Layout title={buildTitle('Blog - Random US Address Generator')}>
-  <section class="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-    <h1 class="text-3xl font-bold text-gray-900 mb-6">Blog</h1>
-    <p class="text-gray-600 mb-8">Articles about random address generation, testing data, and more.</p>
-    <div class="space-y-6">
+<Layout title={buildTitle('Blog - Random US Address Generator')} description={description} keywords={keywords} canonical={canonical}>
+  <Breadcrumbs items={[
+    { name: 'Home', url: '/' },
+    { name: 'Blog', url: '/blog/' },
+  ]} />
+  <section class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+    <h1 class="text-3xl sm:text-4xl font-bold text-gray-900 mb-4">Blog</h1>
+    <p class="text-gray-500 text-lg mb-10">Articles about random address generation, US states, ZIP codes, and test data best practices.</p>
+    <div class="grid gap-6 sm:grid-cols-2">
       {articles.map(a => (
-        <article class="bg-white rounded-lg border border-gray-200 p-6">
-          <time class="text-sm text-gray-500">{a.date}</time>
-          <h2 class="text-xl font-semibold mt-1">
-            <a href={`/blog/${a.slug}/`} class="text-gray-900 hover:text-blue-600">{a.title}</a>
-          </h2>
-        </article>
+        <a href={`/blog/${a.slug}/`} class="glass-card rounded-2xl p-6 card-hover block">
+          <time class="text-xs text-gray-400 uppercase tracking-wider font-medium">{a.date}</time>
+          <h2 class="text-lg font-semibold text-gray-900 mt-2 mb-2 leading-snug">{a.title}</h2>
+          <p class="text-sm text-gray-500 line-clamp-3">{a.content.split('\n\n')[0]}</p>
+          <span class="inline-flex items-center gap-1 text-sm text-brand-600 font-medium mt-3">
+            Read more
+            <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
+            </svg>
+          </span>
+        </a>
       ))}
     </div>
   </section>

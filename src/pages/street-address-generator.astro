@@ -2,13 +2,22 @@
 import Layout from '../layouts/Layout.astro';
 import GeneratorTool from '../components/GeneratorTool.astro';
 import AddressCard from '../components/AddressCard.astro';
-import { buildTitle } from '../lib/seo';
+import Breadcrumbs from '../components/Breadcrumbs.astro';
+import { buildTitle, SITE_URL } from '../lib/seo';
+const title = buildTitle('Street Address Generator - Random Street Addresses');
+const description = 'Generate random US street addresses with realistic street names, numbers, city, state, ZIP, and email. Free street address generator.';
+const keywords = 'street address generator, random street address, US street address, free street address, test street address';
+const canonical = `${SITE_URL}/street-address-generator/`;
 ---
 
-<Layout title={buildTitle('Street Address Generator - Random Street Addresses')}>
+<Layout title={title} description={description} keywords={keywords} canonical={canonical}>
+  <Breadcrumbs items={[
+    { name: 'Home', url: '/' },
+    { name: 'Street Address Generator', url: '/street-address-generator/' },
+  ]} />
   <GeneratorTool
     title="Street Address Generator"
-    description="Generate random US street addresses with realistic street names and numbers."
+    description={description}
   >
     <AddressCard />
   </GeneratorTool>

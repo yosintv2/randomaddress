@@ -1,16 +1,25 @@
 ---
 import Layout from '../layouts/Layout.astro';
 import GeneratorTool from '../components/GeneratorTool.astro';
+import Breadcrumbs from '../components/Breadcrumbs.astro';
 import { generatePhoneNumber } from '../lib/generator';
-import { buildTitle } from '../lib/seo';
+import { buildTitle, SITE_URL } from '../lib/seo';
+const title = buildTitle('Phone Number Generator - Random US Phone Numbers');
+const description = 'Generate random US phone numbers with realistic area codes for all 50 states.';
+const keywords = 'phone number generator, random phone number, US phone number, fake phone number, test phone number';
+const canonical = `${SITE_URL}/phone-number-generator/`;
 
 const phones = Array.from({ length: 5 }, () => generatePhoneNumber());
 ---
 
-<Layout title={buildTitle('Phone Number Generator - Random US Phone Numbers')}>
+<Layout title={title} description={description} keywords={keywords} canonical={canonical}>
+  <Breadcrumbs items={[
+    { name: 'Home', url: '/' },
+    { name: 'Phone Number Generator', url: '/phone-number-generator/' },
+  ]} />
   <GeneratorTool
     title="Phone Number Generator"
-    description="Generate random US phone numbers with realistic area codes for all 50 states."
+    description={description}
   >
     <div class="glass-card rounded-2xl p-6 sm:p-8 fade-in">
       <div class="space-y-3">

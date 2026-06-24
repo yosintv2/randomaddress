@@ -1,16 +1,25 @@
 ---
 import Layout from '../layouts/Layout.astro';
 import GeneratorTool from '../components/GeneratorTool.astro';
+import Breadcrumbs from '../components/Breadcrumbs.astro';
 import { generateUsername } from '../lib/generator';
-import { buildTitle } from '../lib/seo';
+import { buildTitle, SITE_URL } from '../lib/seo';
+const title = buildTitle('Username Generator - Random Usernames');
+const description = 'Generate random usernames for testing, gaming, and online profiles.';
+const keywords = 'username generator, random username, fake username, username ideas, cool usernames';
+const canonical = `${SITE_URL}/username-generator/`;
 
 const usernames = Array.from({ length: 10 }, () => generateUsername());
 ---
 
-<Layout title={buildTitle('Username Generator - Random Usernames')}>
+<Layout title={title} description={description} keywords={keywords} canonical={canonical}>
+  <Breadcrumbs items={[
+    { name: 'Home', url: '/' },
+    { name: 'Username Generator', url: '/username-generator/' },
+  ]} />
   <GeneratorTool
     title="Username Generator"
-    description="Generate random usernames for testing, gaming, and online profiles."
+    description={description}
   >
     <div class="glass-card rounded-2xl p-6 sm:p-8 fade-in">
       <div class="space-y-2">

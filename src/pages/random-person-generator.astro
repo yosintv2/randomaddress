@@ -1,16 +1,25 @@
 ---
 import Layout from '../layouts/Layout.astro';
 import GeneratorTool from '../components/GeneratorTool.astro';
+import Breadcrumbs from '../components/Breadcrumbs.astro';
 import { generatePerson } from '../lib/generator';
-import { buildTitle } from '../lib/seo';
+import { buildTitle, SITE_URL } from '../lib/seo';
+const title = buildTitle('Random Person Generator - Generate Random People');
+const description = 'Generate random people with complete details including name, age, address, phone number, email, and username.';
+const keywords = 'random person generator, fake person generator, random identity, fake identity, test data generator';
+const canonical = `${SITE_URL}/random-person-generator/`;
 
 const person = generatePerson();
 ---
 
-<Layout title={buildTitle('Random Person Generator - Generate Random People')}>
+<Layout title={title} description={description} keywords={keywords} canonical={canonical}>
+  <Breadcrumbs items={[
+    { name: 'Home', url: '/' },
+    { name: 'Random Person Generator', url: '/random-person-generator/' },
+  ]} />
   <GeneratorTool
     title="Random Person Generator"
-    description="Generate random people with complete details including name, age, address, phone number, email, and username."
+    description={description}
   >
     <div class="glass-card rounded-2xl p-6 sm:p-8 fade-in">
       <div class="grid grid-cols-2 gap-x-6 gap-y-4 text-sm">

@@ -7,6 +7,7 @@ export interface SEOProps {
 }
 
 export const SITE_NAME = 'Random US Address Generator';
+export const SITE_BRAND = 'RandomUSAddress.com';
 export const SITE_URL = 'https://randomusaddress.com';
 export const DEFAULT_DESCRIPTION = 'Generate random US addresses with names, cities, states, ZIP codes and phone numbers. Free random address generator for testing and educational purposes.';
 export const DEFAULT_TITLE = 'Random US Address Generator (Free Random Address Generator)';

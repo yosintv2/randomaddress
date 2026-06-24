@@ -1,6 +1,7 @@
 ---
 import Layout from '../../layouts/Layout.astro';
-import { buildTitle } from '../../lib/seo';
+import Breadcrumbs from '../../components/Breadcrumbs.astro';
+import { buildTitle, SITE_URL } from '../../lib/seo';
 import { articles } from '../../lib/blog';
 
 export function getStaticPaths() {
@@ -11,12 +12,22 @@ export function getStaticPaths() {
 }
 
 const { article } = Astro.props;
+const paragraphs = article.content.split('\n\n').filter(Boolean);
+const title = buildTitle(article.title);
+const canonical = `${SITE_URL}/blog/${article.slug}/`;
 ---
 
-<Layout title={buildTitle(article.title)}>
-  <article class="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 py-12 prose prose-gray">
+<Layout title={title} canonical={canonical}>
+  <Breadcrumbs items={[
+    { name: 'Home', url: '/' },
+    { name: 'Blog', url: '/blog/' },
+    { name: article.title, url: `/blog/${article.slug}/` },
+  ]} />
+  <article class="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
     <time class="text-sm text-gray-500">{article.date}</time>
-    <h1>{article.title}</h1>
-    <p>{article.content}</p>
+    <h1 class="text-3xl font-bold text-gray-900 mt-2 mb-6">{article.title}</h1>
+    <div class="prose prose-gray max-w-none">
+      {paragraphs.map(p => <p class="mb-4 leading-relaxed">{p}</p>)}
+    </div>
   </article>
 </Layout>

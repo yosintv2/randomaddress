@@ -1,8 +1,9 @@
 ---
 import Layout from '../../layouts/Layout.astro';
 import AddressCard from '../../components/AddressCard.astro';
+import Breadcrumbs from '../../components/Breadcrumbs.astro';
 import { getCities, getStates, getZipcodes } from '../../lib/generator';
-import { buildTitle, slugify } from '../../lib/seo';
+import { buildTitle, slugify, SITE_URL } from '../../lib/seo';
 
 export function getStaticPaths() {
   const paths: { params: { state: string; slug: string }; props: { type: 'city' | 'zip'; cityName?: string; stateName?: string; zipData?: { zip: string; city: string; state: string } } }[] = [];
@@ -36,32 +37,77 @@ const { type, cityName, stateName, zipData } = Astro.props;
 let title: string;
 let description: string;
 let heading: string;
+let keywords: string;
+let canonical: string;
+let breadcrumbs: { name: string; url: string }[];
+let placeSchema: Record<string, unknown>;
 
 if (type === 'city' && cityName && stateName) {
+  const citySlug = slugify(cityName);
+  const stateSlug = slugify(stateName);
   title = buildTitle(`${cityName}, ${stateName} Address Generator - Random ${cityName} Addresses`);
   description = `Generate random addresses for ${cityName}, ${stateName}. Free random address generator with ZIP codes and phone numbers.`;
   heading = `${cityName}, ${stateName} Address Generator`;
+  keywords = `${cityName} ${stateName} address, random ${cityName} address, ${cityName} generator, ${stateName} test data`;
+  canonical = `${SITE_URL}/${stateSlug}/${citySlug}/`;
+  breadcrumbs = [
+    { name: 'Home', url: '/' },
+    { name: stateName, url: `/states/${stateSlug}/` },
+    { name: cityName, url: `/${stateSlug}/${citySlug}/` },
+  ];
+  placeSchema = {
+    '@context': 'https://schema.org',
+    '@type': 'Place',
+    name: `${cityName}, ${stateName} Address Generator`,
+    description,
+    address: { '@type': 'PostalAddress', addressLocality: cityName, addressRegion: stateName, addressCountry: 'US' },
+  };
 } else if (type === 'zip' && zipData) {
+  const stateSlug = slugify(zipData.state);
   title = buildTitle(`Address ${zipData.zip}, ${zipData.state} - Random ${zipData.zip} Address`);
   description = `Generate random addresses for ZIP code ${zipData.zip} in ${zipData.state}. Free random address generator.`;
   heading = `Address ${zipData.zip}, ${zipData.state}`;
+  keywords = `${zipData.zip} address, random ${zipData.zip} address, ZIP ${zipData.zip} ${zipData.state}`;
+  canonical = `${SITE_URL}/${stateSlug}/${zipData.zip}/`;
+  breadcrumbs = [
+    { name: 'Home', url: '/' },
+    { name: zipData.state, url: `/states/${stateSlug}/` },
+    { name: `${zipData.zip} - ${zipData.city}`, url: `/${stateSlug}/${zipData.zip}/` },
+  ];
+  placeSchema = {
+    '@context': 'https://schema.org',
+    '@type': 'Place',
+    name: `Address ${zipData.zip}`,
+    description,
+    address: { '@type': 'PostalAddress', postalCode: zipData.zip, addressLocality: zipData.city, addressRegion: zipData.state, addressCountry: 'US' },
+  };
 } else {
   title = buildTitle('Address Generator');
   description = 'Generate random US addresses.';
   heading = 'Address Generator';
+  keywords = 'US address generator, random address, test address';
+  canonical = `${SITE_URL}/`;
+  breadcrumbs = [{ name: 'Home', url: '/' }];
+  placeSchema = {};
 }
 ---
 
-<Layout title={title} description={description}>
-  <section class="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+<Layout title={title} description={description} keywords={keywords} canonical={canonical}>
+  <Breadcrumbs items={breadcrumbs} />
+
+  {placeSchema['@type'] && (
+    <script slot="schema" type="application/ld+json" set:html={JSON.stringify(placeSchema)} />
+  )}
+
+  <section class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
     <div class="text-center mb-8">
-      <h1 class="text-3xl font-bold text-gray-900 mb-3">{heading}</h1>
-      <p class="text-gray-600">{description}</p>
+      <h1 class="text-3xl lg:text-4xl font-bold text-gray-900 mb-3">{heading}</h1>
+      <p class="text-lg text-gray-600 max-w-2xl mx-auto">{description}</p>
     </div>
 
     <AddressCard />
 
-    <div class="mt-8 text-center">
+    <div class="mt-6 text-center">
       <a href={Astro.url.pathname} class="inline-block bg-blue-600 text-white px-6 py-3 rounded-lg font-medium hover:bg-blue-700 transition">
         Generate Again
       </a>

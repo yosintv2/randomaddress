@@ -1,16 +1,25 @@
 ---
 import Layout from '../layouts/Layout.astro';
 import GeneratorTool from '../components/GeneratorTool.astro';
+import Breadcrumbs from '../components/Breadcrumbs.astro';
 import { generateEmail } from '../lib/generator';
-import { buildTitle } from '../lib/seo';
+import { buildTitle, SITE_URL } from '../lib/seo';
+const title = buildTitle('Email Generator - Random Email Addresses');
+const description = 'Generate random email addresses for testing and development purposes.';
+const keywords = 'fake email generator, random email address, temporary email, disposable email, test email';
+const canonical = `${SITE_URL}/fake-email-generator/`;
 
 const emails = Array.from({ length: 10 }, () => generateEmail());
 ---
 
-<Layout title={buildTitle('Email Generator - Random Email Addresses')}>
+<Layout title={title} description={description} keywords={keywords} canonical={canonical}>
+  <Breadcrumbs items={[
+    { name: 'Home', url: '/' },
+    { name: 'Email Generator', url: '/fake-email-generator/' },
+  ]} />
   <GeneratorTool
     title="Email Generator"
-    description="Generate random email addresses for testing and development purposes."
+    description={description}
   >
     <div class="glass-card rounded-2xl p-6 sm:p-8 fade-in">
       <div class="space-y-2">

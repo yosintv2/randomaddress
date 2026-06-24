@@ -1,0 +1,74 @@
+---
+import states from '../data/states.json';
+import cities from '../data/cities.json';
+import zipcodes from '../data/zipcodes.json';
+import { slugify } from '../lib/seo';
+
+const seenCities = new Set<string>();
+const uniqueCities = cities.filter(c => {
+  const key = slugify(c.city);
+  if (seenCities.has(key)) return false;
+  seenCities.add(key);
+  return true;
+});
+const seenZips = new Set<string>();
+const uniqueZipcodes = zipcodes.filter(z => {
+  if (seenZips.has(z.zip)) return false;
+  seenZips.add(z.zip);
+  return true;
+});
+---
+
+<section class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16" id="sitemap">
+  <div class="text-center mb-12">
+    <h2 class="section-heading mb-4">Explore All US Locations</h2>
+    <p class="section-sub mx-auto">Browse our complete directory of states, cities, and ZIP codes across the United States.</p>
+  </div>
+
+  <div class="space-y-12">
+    <!-- States -->
+    <div>
+      <h3 class="text-xl font-bold text-gray-900 mb-6 flex items-center gap-2">
+        <span class="w-1.5 h-6 rounded-full bg-brand-500"></span>
+        All 50 US States
+      </h3>
+      <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-2">
+        {states.map(s => (
+          <a href={`/states/${slugify(s.name)}/`} class="glass-card rounded-lg px-3 py-2 text-sm text-gray-600 hover:text-brand-600 hover:shadow-md transition-all truncate">
+            {s.name} ({s.abbr})
+          </a>
+        ))}
+      </div>
+    </div>
+
+    <!-- Cities -->
+    <div>
+      <h3 class="text-xl font-bold text-gray-900 mb-6 flex items-center gap-2">
+        <span class="w-1.5 h-6 rounded-full bg-accent-500"></span>
+        All US Cities ({uniqueCities.length})
+      </h3>
+      <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-2">
+        {uniqueCities.map(c => (
+          <a href={`/cities/${slugify(c.city)}/`} class="glass-card rounded-lg px-3 py-2 text-sm text-gray-600 hover:text-brand-600 hover:shadow-md transition-all truncate">
+            {c.city}, {c.state}
+          </a>
+        ))}
+      </div>
+    </div>
+
+    <!-- ZIP Codes -->
+    <div>
+      <h3 class="text-xl font-bold text-gray-900 mb-6 flex items-center gap-2">
+        <span class="w-1.5 h-6 rounded-full bg-emerald-500"></span>
+        All US ZIP Codes ({uniqueZipcodes.length})
+      </h3>
+      <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-2">
+        {uniqueZipcodes.map(z => (
+          <a href={`/zip-codes/${z.zip}/`} class="glass-card rounded-lg px-3 py-2 text-sm text-gray-600 hover:text-brand-600 hover:shadow-md transition-all truncate">
+            {z.zip} – {z.city}, {z.state}
+          </a>
+        ))}
+      </div>
+    </div>
+  </div>
+</section>

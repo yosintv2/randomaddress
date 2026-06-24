@@ -2,13 +2,22 @@
 import Layout from '../layouts/Layout.astro';
 import GeneratorTool from '../components/GeneratorTool.astro';
 import AddressCard from '../components/AddressCard.astro';
-import { buildTitle } from '../lib/seo';
+import Breadcrumbs from '../components/Breadcrumbs.astro';
+import { buildTitle, SITE_URL } from '../lib/seo';
+const title = buildTitle('Random State Generator - Random US State Addresses');
+const description = 'Generate random US addresses from all 50 states. Each click generates an address from a random state with full details.';
+const keywords = 'random state generator, random state address, US state address, all states address generator, 50 states';
+const canonical = `${SITE_URL}/random-state-generator/`;
 ---
 
-<Layout title={buildTitle('Random State Generator - Random US State Addresses')}>
+<Layout title={title} description={description} keywords={keywords} canonical={canonical}>
+  <Breadcrumbs items={[
+    { name: 'Home', url: '/' },
+    { name: 'Random State Generator', url: '/random-state-generator/' },
+  ]} />
   <GeneratorTool
     title="Random State Generator"
-    description="Generate random US addresses from any state. Each click generates an address from a different state."
+    description={description}
   >
     <AddressCard />
   </GeneratorTool>
