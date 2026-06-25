@@ -6,7 +6,7 @@ import ToolCard from '../components/ToolCard.astro';
 import FAQs from '../components/FAQs.astro';
 import Breadcrumbs from '../components/Breadcrumbs.astro';
 import { buildTitle, SITE_URL, getFAQSchema, getWebPageSchema } from '../lib/seo';
-const title = buildTitle('Street Address Generator - Random Street Addresses');
+const title = buildTitle('US Street Address Generator - Random US Street Addresses');
 const description = 'Generate random US street addresses with realistic street names, numbers, city, state, ZIP, and email. Free street address generator.';
 const keywords = 'street address generator, random street address, US street address, free street address, test street address';
 const canonical = `${SITE_URL}/street-address-generator/`;
@@ -25,10 +25,10 @@ const faqs = [
   <script slot="schema" type="application/ld+json" set:html={JSON.stringify(getFAQSchema(faqs))} />
   <Breadcrumbs items={[
     { name: 'Home', url: '/' },
-    { name: 'Street Address Generator', url: '/street-address-generator/' },
+    { name: 'US Street Address Generator', url: '/street-address-generator/' },
   ]} />
   <GeneratorTool
-    title="Street Address Generator"
+    title="US Street Address Generator"
     description={description}
   >
     <AddressCard />
@@ -45,7 +45,7 @@ const faqs = [
       <div class="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
         <ToolCard href="/random-address-generator/" title="Random US Address Generator" description="Generate random US addresses with complete details." />
         <ToolCard href="/us-address-generator/" title="US Address Generator" description="Generate random US addresses for testing and development." />
-        <ToolCard href="/random-person-generator/" title="Person Generator" description="Generate complete person profiles with address, phone, and email." />
+        <ToolCard href="/random-person-generator/" title="US Person Generator" description="Generate complete US person profiles with address, phone, and email." />
       </div>
     </div>
   </section>

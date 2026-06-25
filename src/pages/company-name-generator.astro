@@ -5,7 +5,7 @@ import ToolCard from '../components/ToolCard.astro';
 import FAQs from '../components/FAQs.astro';
 import Breadcrumbs from '../components/Breadcrumbs.astro';
 import { buildTitle, SITE_URL, getFAQSchema, getWebPageSchema } from '../lib/seo';
-const title = buildTitle('Company Name Generator - Random Company Names');
+const title = buildTitle('US Company Name Generator - Random Company Names');
 const description = 'Generate random company and business names for brainstorming and testing.';
 const keywords = 'company name generator, business name generator, random company name, LLC name generator, business name ideas';
 const canonical = `${SITE_URL}/company-name-generator/`;
@@ -24,10 +24,10 @@ const faqs = [
   <script slot="schema" type="application/ld+json" set:html={JSON.stringify(getFAQSchema(faqs))} />
   <Breadcrumbs items={[
     { name: 'Home', url: '/' },
-    { name: 'Company Name Generator', url: '/company-name-generator/' },
+    { name: 'US Company Name Generator', url: '/company-name-generator/' },
   ]} />
   <GeneratorTool
-    title="Company Name Generator"
+    title="US Company Name Generator"
     description={description}
   >
     <div class="glass-card rounded-2xl p-6 sm:p-8 fade-in">
@@ -63,8 +63,8 @@ const faqs = [
     <div class="mt-12">
       <h3 class="text-xl font-semibold text-gray-900 mb-6 text-center">Related Tools</h3>
       <div class="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
-        <ToolCard href="/name-generator/" title="Name Generator" description="Generate random first and last names for US residents." />
-        <ToolCard href="/email-generator/" title="Email Generator" description="Generate random email addresses for testing." />
+        <ToolCard href="/name-generator/" title="US Name Generator" description="Generate random first and last names for US residents." />
+        <ToolCard href="/email-generator/" title="US Email Generator" description="Generate random US email addresses for testing." />
         <ToolCard href="/random-person-generator/" title="Random Person Generator" description="Generate complete person profiles with name, address, phone, and email." />
       </div>
     </div>

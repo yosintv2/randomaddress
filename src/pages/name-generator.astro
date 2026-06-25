@@ -5,7 +5,7 @@ import ToolCard from '../components/ToolCard.astro';
 import FAQs from '../components/FAQs.astro';
 import Breadcrumbs from '../components/Breadcrumbs.astro';
 import { buildTitle, SITE_URL, getFAQSchema, getWebPageSchema } from '../lib/seo';
-const title = buildTitle('Name Generator - Random Names');
+const title = buildTitle('US Name Generator - Random US Names');
 const description = 'Generate random first and last names for US residents. Perfect for testing and development.';
 const keywords = 'name generator, random name generator, random names, US name generator, test names';
 const canonical = `${SITE_URL}/name-generator/`;
@@ -24,10 +24,10 @@ const faqs = [
   <script slot="schema" type="application/ld+json" set:html={JSON.stringify(getFAQSchema(faqs))} />
   <Breadcrumbs items={[
     { name: 'Home', url: '/' },
-    { name: 'Name Generator', url: '/name-generator/' },
+    { name: 'US Name Generator', url: '/name-generator/' },
   ]} />
   <GeneratorTool
-    title="Name Generator"
+    title="US Name Generator"
     description={description}
   >
     <div class="glass-card rounded-2xl p-6 sm:p-8 fade-in">
@@ -65,8 +65,8 @@ const faqs = [
       <h3 class="text-xl font-semibold text-gray-900 mb-6 text-center">Related Tools</h3>
       <div class="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
         <ToolCard href="/random-person-generator/" title="Random Person Generator" description="Generate complete person profiles with name, address, phone, and email." />
-        <ToolCard href="/email-generator/" title="Email Generator" description="Generate random email addresses for testing." />
-        <ToolCard href="/username-generator/" title="Username Generator" description="Generate random usernames for testing and online profiles." />
+        <ToolCard href="/email-generator/" title="US Email Generator" description="Generate random US email addresses for testing." />
+        <ToolCard href="/username-generator/" title="US Username Generator" description="Generate random usernames for testing and online profiles." />
       </div>
     </div>
   </section>

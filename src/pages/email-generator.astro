@@ -5,7 +5,7 @@ import ToolCard from '../components/ToolCard.astro';
 import FAQs from '../components/FAQs.astro';
 import Breadcrumbs from '../components/Breadcrumbs.astro';
 import { buildTitle, SITE_URL, getFAQSchema, getWebPageSchema } from '../lib/seo';
-const title = buildTitle('Email Generator - Random Email Addresses');
+const title = buildTitle('US Email Generator - Random US Email Addresses');
 const description = 'Generate random email addresses for testing and development purposes.';
 const keywords = 'email generator, random email address, test email, temporary email, disposable email';
 const canonical = `${SITE_URL}/email-generator/`;
@@ -24,10 +24,10 @@ const faqs = [
   <script slot="schema" type="application/ld+json" set:html={JSON.stringify(getFAQSchema(faqs))} />
   <Breadcrumbs items={[
     { name: 'Home', url: '/' },
-    { name: 'Email Generator', url: '/email-generator/' },
+    { name: 'US Email Generator', url: '/email-generator/' },
   ]} />
   <GeneratorTool
-    title="Email Generator"
+    title="US Email Generator"
     description={description}
   >
     <div class="glass-card rounded-2xl p-6 sm:p-8 fade-in">
@@ -63,8 +63,8 @@ const faqs = [
     <div class="mt-12">
       <h3 class="text-xl font-semibold text-gray-900 mb-6 text-center">Related Tools</h3>
       <div class="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
-        <ToolCard href="/name-generator/" title="Name Generator" description="Generate random first and last names for US residents." />
-        <ToolCard href="/username-generator/" title="Username Generator" description="Generate random usernames for testing and online profiles." />
+        <ToolCard href="/name-generator/" title="US Name Generator" description="Generate random first and last names for US residents." />
+        <ToolCard href="/username-generator/" title="US Username Generator" description="Generate random usernames for testing and online profiles." />
         <ToolCard href="/random-person-generator/" title="Random Person Generator" description="Generate complete person profiles with name, address, phone, and email." />
       </div>
     </div>
