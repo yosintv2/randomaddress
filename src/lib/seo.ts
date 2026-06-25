@@ -13,7 +13,7 @@ export const DEFAULT_DESCRIPTION = 'Generate random US addresses with names, cit
 export const DEFAULT_TITLE = 'Random US Address Generator - Free Random US Address Generator';
 
 export function buildTitle(title: string): string {
-  return `${title} | Random US Address Generator`;
+  return `${title} | RandomUSAddress.com`;
 }
 
 export function slugify(text: string): string {
