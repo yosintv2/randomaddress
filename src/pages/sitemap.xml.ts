@@ -1,50 +1,101 @@
 import type { APIRoute } from 'astro';
-import { getStates, getCities, getZipcodes, getStreets } from '../lib/generator';
-import { SITE_URL } from '../lib/seo';
+import { getStates, getCities, getZipcodes } from '../lib/generator';
+import { SITE_URL, slugify } from '../lib/seo';
 import { articles } from '../lib/blog';
 
-const staticPages = [
-  '', 'about/', 'contact/', 'privacy-policy/', 'terms/', 'cookie-policy/',
-  'disclaimer/', 'dmca/', 'all-tools/', 'blog/',
-  'random-address-generator/', 'us-address-generator/', 'street-address-generator/',
-  'random-person-generator/', 'name-generator/', 'email-generator/', 'username-generator/',
-  'company-name-generator/', 'phone-number-generator/', 'random-state-generator/',
-  'random-city-generator/', 'us-address/', 'states/', 'cities/', 'zip-codes/',
+const staticPages: { path: string; priority: string; changefreq: string }[] = [
+  { path: '', priority: '1.0', changefreq: 'daily' },
+  { path: 'about/', priority: '0.5', changefreq: 'monthly' },
+  { path: 'contact/', priority: '0.5', changefreq: 'monthly' },
+  { path: 'privacy-policy/', priority: '0.4', changefreq: 'monthly' },
+  { path: 'terms/', priority: '0.4', changefreq: 'monthly' },
+  { path: 'cookie-policy/', priority: '0.4', changefreq: 'monthly' },
+  { path: 'disclaimer/', priority: '0.4', changefreq: 'monthly' },
+  { path: 'dmca/', priority: '0.4', changefreq: 'monthly' },
+  { path: 'all-tools/', priority: '0.7', changefreq: 'weekly' },
+  { path: 'blog/', priority: '0.8', changefreq: 'weekly' },
+  { path: 'random-address-generator/', priority: '0.9', changefreq: 'weekly' },
+  { path: 'us-address-generator/', priority: '0.9', changefreq: 'weekly' },
+  { path: 'street-address-generator/', priority: '0.8', changefreq: 'weekly' },
+  { path: 'random-person-generator/', priority: '0.8', changefreq: 'weekly' },
+  { path: 'name-generator/', priority: '0.7', changefreq: 'weekly' },
+  { path: 'email-generator/', priority: '0.7', changefreq: 'weekly' },
+  { path: 'username-generator/', priority: '0.7', changefreq: 'weekly' },
+  { path: 'company-name-generator/', priority: '0.7', changefreq: 'weekly' },
+  { path: 'phone-number-generator/', priority: '0.7', changefreq: 'weekly' },
+  { path: 'random-state-generator/', priority: '0.7', changefreq: 'weekly' },
+  { path: 'random-city-generator/', priority: '0.7', changefreq: 'weekly' },
+  { path: 'ip-address-generator/', priority: '0.7', changefreq: 'weekly' },
+  { path: 'us-address/', priority: '0.8', changefreq: 'weekly' },
 ];
+
+function url(loc: string, priority: string, changefreq: string): string {
+  return `<url><loc>${SITE_URL}/${loc}</loc><changefreq>${changefreq}</changefreq><priority>${priority}</priority></url>`;
+}
 
 export const GET: APIRoute = async () => {
   const urls: string[] = [];
 
   for (const p of staticPages) {
-    urls.push(`<url><loc>${SITE_URL}/${p}</loc></url>`);
+    urls.push(url(p.path, p.priority, p.changefreq));
   }
 
-  for (const state of getStates()) {
-    const slug = state.name.toLowerCase().replace(/\s+/g, '-');
-    urls.push(`<url><loc>${SITE_URL}/states/${slug}/</loc></url>`);
-  }
-
-  for (const article of articles) {
-    urls.push(`<url><loc>${SITE_URL}/blog/${article.slug}/</loc></url>`);
-  }
-
+  const states = getStates();
   const cities = getCities();
   const zips = getZipcodes();
-  const states = getStates();
 
+  // State index pages
+  urls.push(url('states/', '0.8', 'weekly'));
+  urls.push(url('cities/', '0.8', 'weekly'));
+  urls.push(url('zip-codes/', '0.8', 'weekly'));
+
+  // Individual state pages
   for (const state of states) {
-    const stateSlug = state.name.toLowerCase().replace(/\s+/g, '-');
+    const stateSlug = slugify(state.name);
+
+    // /states/{state}/
+    urls.push(url(`states/${stateSlug}/`, '0.8', 'weekly'));
+
+    // /{state}/ (state root)
+    urls.push(url(`${stateSlug}/`, '0.7', 'weekly'));
+
+    // /cities/{city}/
+    const seenCities = new Set<string>();
     const stateCities = cities.filter(c => c.state === state.name);
-    const stateZips = zips.filter(z => z.state === state.name);
-
     for (const city of stateCities) {
-      const citySlug = city.city.toLowerCase().replace(/\s+/g, '-');
-      urls.push(`<url><loc>${SITE_URL}/${stateSlug}/${citySlug}/</loc></url>`);
+      const citySlug = slugify(city.city);
+      if (!seenCities.has(citySlug)) {
+        seenCities.add(citySlug);
+        urls.push(url(`cities/${citySlug}/`, '0.7', 'weekly'));
+      }
     }
 
-    for (const zip of stateZips) {
-      urls.push(`<url><loc>${SITE_URL}/${stateSlug}/${zip.zip}/</loc></url>`);
+    // /{state}/{city}/
+    const stateCitySeen = new Set<string>();
+    for (const city of stateCities) {
+      const citySlug = slugify(city.city);
+      const key = `${stateSlug}/${citySlug}`;
+      if (!stateCitySeen.has(key)) {
+        stateCitySeen.add(key);
+        urls.push(url(`${stateSlug}/${citySlug}/`, '0.7', 'weekly'));
+      }
     }
+
+    // /zip-codes/{zip}/
+    const stateZips = zips.filter(z => z.state === state.name);
+    for (const zip of stateZips) {
+      urls.push(url(`zip-codes/${zip.zip}/`, '0.6', 'weekly'));
+    }
+
+    // /{state}/{zip}/
+    for (const zip of stateZips) {
+      urls.push(url(`${stateSlug}/${zip.zip}/`, '0.6', 'weekly'));
+    }
+  }
+
+  // Blog articles
+  for (const article of articles) {
+    urls.push(url(`blog/${article.slug}/`, '0.6', 'monthly'));
   }
 
   const xml = `<?xml version="1.0" encoding="UTF-8"?>
