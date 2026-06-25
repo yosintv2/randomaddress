@@ -47,6 +47,14 @@ const {
     <meta name="theme-color" content="#2563eb" media="(prefers-color-scheme: light)" />
     <meta name="theme-color" content="#0f172a" media="(prefers-color-scheme: dark)" />
     <slot name="schema" />
+    <!-- Google tag (gtag.js) -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-BJMP43L3CJ"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+      gtag('config', 'G-BJMP43L3CJ');
+    </script>
   </head>
   <body class="min-h-screen text-gray-900 antialiased">
     <a href="#main-content" class="skip-to-content">Skip to main content</a>
