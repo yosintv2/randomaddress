@@ -29,13 +29,20 @@ const faqs = [
   <GeneratorTool
     title="US IP Address Generator"
     description={description}
+    hideGenerate
   >
     <div class="glass-card rounded-2xl p-6 sm:p-8 fade-in">
       <div class="space-y-2" id="ip-list"></div>
     </div>
   </GeneratorTool>
-  <div class="flex justify-center mb-3">
-    <button id="copy-all-ips" class="btn-secondary text-sm px-4 py-2 w-full sm:w-auto min-h-[44px]">
+  <div class="flex flex-col sm:flex-row justify-center gap-3 mt-8">
+    <button data-regenerate class="btn-primary w-full sm:w-auto min-h-[48px]">
+      <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/>
+      </svg>
+      Generate New
+    </button>
+    <button id="copy-all-ips" class="btn-secondary w-full sm:w-auto min-h-[48px]">
       <svg class="w-4 h-4 inline-block mr-1.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 5H6a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2v-1M8 5a2 2 0 002 2h2a2 2 0 002-2M8 5a2 2 0 012-2h2a2 2 0 012 2m0 0h2a2 2 0 012 2v3m2 4H10m0 0l3-3m-3 3l3 3"/>
       </svg>
@@ -66,9 +73,9 @@ const faqs = [
         c.innerHTML = "";
         ips.forEach(function (ip, i) {
           var w = document.createElement("div");
-          w.className = "flex items-center gap-2 group flex-col sm:flex-row";
+          w.className = "flex items-center gap-2 group";
           var d = document.createElement("div");
-          d.className = "flex-1 font-mono text-sm text-gray-900 dark:text-gray-100 bg-gray-50 dark:bg-slate-700 rounded-xl px-4 py-2.5 truncate w-full sm:w-auto";
+          d.className = "flex-1 font-mono text-sm text-gray-900 dark:text-gray-100 bg-gray-50 dark:bg-slate-700 rounded-xl px-4 py-2.5 truncate";
           d.textContent = ip;
           var btn = document.createElement("button");
           btn.className = "shrink-0 p-2.5 rounded-lg bg-gray-100 dark:bg-slate-600 hover:bg-gray-200 dark:hover:bg-slate-500 text-gray-500 dark:text-gray-300 transition-colors min-h-[44px] min-w-[44px]";
