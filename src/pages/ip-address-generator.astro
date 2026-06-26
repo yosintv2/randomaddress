@@ -14,7 +14,7 @@ const faqs = [
   { question: 'Are these real IP addresses?', answer: 'These are randomly generated IP addresses using common US IP prefixes. They are not connected to any real device or network.' },
   { question: 'What IP versions are generated?', answer: 'The generator produces IPv4 addresses with realistic US-based prefixes.' },
   { question: 'Can I use these for testing?', answer: 'Yes, these IP addresses are perfect for testing network applications, security tools, and populating databases.' },
-  { question: 'How many IPs are generated at once?', answer: 'The generator produces 200 IP addresses at a time with a single click.' },
+  { question: 'How many IPs are generated at once?', answer: 'The generator produces 20 IP addresses at a time with a single click.' },
   { question: 'Is this tool free?', answer: 'Yes, our IP address generator is completely free to use with no registration required.' },
 ];
 ---
@@ -34,8 +34,8 @@ const faqs = [
       <div class="space-y-2" id="ip-list"></div>
     </div>
   </GeneratorTool>
-  <div class="flex justify-end mb-3">
-    <button id="copy-all-ips" class="btn-secondary text-sm px-4 py-2 min-h-[44px]">
+  <div class="flex justify-center mb-3">
+    <button id="copy-all-ips" class="btn-secondary text-sm px-4 py-2 w-full sm:w-auto min-h-[44px]">
       <svg class="w-4 h-4 inline-block mr-1.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 5H6a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2v-1M8 5a2 2 0 002 2h2a2 2 0 002-2M8 5a2 2 0 012-2h2a2 2 0 012 2m0 0h2a2 2 0 012 2v3m2 4H10m0 0l3-3m-3 3l3 3"/>
       </svg>
@@ -60,15 +60,15 @@ const faqs = [
       }, 2000);
     }
     function render() {
-      fetch("/api/ips.json?count=200").then(function (r) { return r.json(); }).then(function (ips) {
+      fetch("/api/ips.json?count=20").then(function (r) { return r.json(); }).then(function (ips) {
         var c = document.getElementById("ip-list");
         if (!c) return;
         c.innerHTML = "";
         ips.forEach(function (ip, i) {
           var w = document.createElement("div");
-          w.className = "flex items-center gap-2 group";
+          w.className = "flex items-center gap-2 group flex-col sm:flex-row";
           var d = document.createElement("div");
-          d.className = "flex-1 font-mono text-sm text-gray-900 dark:text-gray-100 bg-gray-50 dark:bg-slate-700 rounded-xl px-4 py-2.5 truncate";
+          d.className = "flex-1 font-mono text-sm text-gray-900 dark:text-gray-100 bg-gray-50 dark:bg-slate-700 rounded-xl px-4 py-2.5 truncate w-full sm:w-auto";
           d.textContent = ip;
           var btn = document.createElement("button");
           btn.className = "shrink-0 p-2.5 rounded-lg bg-gray-100 dark:bg-slate-600 hover:bg-gray-200 dark:hover:bg-slate-500 text-gray-500 dark:text-gray-300 transition-colors min-h-[44px] min-w-[44px]";
@@ -97,7 +97,7 @@ const faqs = [
   <section class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
     <div class="max-w-3xl mx-auto">
       <h2 class="text-2xl font-bold text-gray-900 mb-4">About US IP Address Generator</h2>
-      <p class="text-gray-600 leading-relaxed mb-4">Our US IP address generator creates 200 random IPv4 addresses using realistic US-based IP prefixes. Each address follows the standard IPv4 format with octets ranging from common US-assigned blocks.</p>
+      <p class="text-gray-600 leading-relaxed mb-4">Our US IP address generator creates 20 random IPv4 addresses using realistic US-based IP prefixes. Each address follows the standard IPv4 format with octets ranging from common US-assigned blocks.</p>
       <p class="text-gray-600 leading-relaxed mb-4">Perfect for testing network applications, security tools, log simulation, database population, and any development scenario that requires realistic US IP addresses.</p>
     </div>
     <div class="mt-12">
