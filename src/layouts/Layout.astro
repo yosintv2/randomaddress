@@ -1,6 +1,6 @@
 ---
 import '../styles/global.css';
-import { SITE_NAME, SITE_BRAND, SITE_URL, DEFAULT_DESCRIPTION } from '../lib/seo';
+import { SITE_NAME, SITE_BRAND, SITE_URL, DEFAULT_DESCRIPTION, DEFAULT_KEYWORDS } from '../lib/seo';
 
 export interface Props {
   title: string;
@@ -16,7 +16,7 @@ const {
   title,
   description = DEFAULT_DESCRIPTION,
   canonical,
-  keywords,
+  keywords = DEFAULT_KEYWORDS,
   ogImage = '/favicon.svg',
   ogType = 'website',
   noindex,

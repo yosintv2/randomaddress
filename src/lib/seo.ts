@@ -10,6 +10,7 @@ export const SITE_NAME = 'Random US Address Generator';
 export const SITE_BRAND = 'RandomUSAddress.com';
 export const SITE_URL = 'https://www.randomusaddress.com';
 export const DEFAULT_DESCRIPTION = 'Generate random US addresses with names, cities, states, ZIP codes and phone numbers. Free random US address generator for testing and educational purposes.';
+export const DEFAULT_KEYWORDS = 'random US address generator, fake address generator, US address generator, random person generator, fake US address, US phone number generator, random zip code generator, address generator USA, fake name generator, random address generator';
 export const DEFAULT_TITLE = 'Random US Address Generator - Free Random US Address Generator';
 
 export function buildTitle(title: string): string {
