@@ -31,7 +31,7 @@ if (!cityData) {
 const stateSlug = slugify(cityData.state);
 const title = buildTitle(`${cityData.city}, ${cityData.state} Address Generator - Random ${cityData.city} Addresses`);
 const description = `Generate random ${cityData.city}, ${cityData.state} addresses with ZIP codes and phone numbers. Free ${cityData.city} address generator for testing.`;
-const keywords = `${cityData.city} address generator, random ${cityData.city} address, ${cityData.city} ${cityData.state} ZIP codes, free ${cityData.city} test data`;
+const keywords = `${cityData.city} address generator, random ${cityData.city} address, ${cityData.city} ${cityData.state} ZIP codes, free ${cityData.city} test data, ${cityData.city} fake address, ${cityData.city} random address, ${cityData.city} ${cityData.state} address, ${cityData.city} street address, ${cityData.city} test address`;
 const faqs = getCityFAQs(cityData.city, cityData.state);
 const canonical = `${SITE_URL}/${stateSlug}/${citySlug}/`;
 const cityZipCount = getZipcodes().filter(z => z.city === cityData.city).length;
