@@ -4,14 +4,21 @@ import { getCities } from '../../lib/generator';
 import { buildTitle, slugify } from '../../lib/seo';
 
 const allCities = getCities();
+const seen = new Set<string>();
+const uniqueCities = allCities.filter(c => {
+  const key = slugify(c.city);
+  if (seen.has(key)) return false;
+  seen.add(key);
+  return true;
+}).sort((a, b) => a.city.localeCompare(b.city));
 ---
 
 <Layout title={buildTitle('All Cities - City Address Generators')}>
   <section class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-    <h1 class="text-3xl font-bold text-gray-900 mb-6">Cities</h1>
+    <h1 class="text-3xl font-bold text-gray-900 mb-6">All US Cities ({uniqueCities.length})</h1>
     <p class="text-gray-600 mb-8">Select a city to generate random addresses for that city.</p>
     <div class="grid sm:grid-cols-2 md:grid-cols-3 gap-4">
-      {allCities.map(c => (
+      {uniqueCities.map(c => (
         <a href={`/cities/${slugify(c.city)}/`} class="bg-white p-4 rounded-lg border border-gray-200 hover:border-blue-300 hover:shadow-sm transition">
           <span class="font-medium text-gray-900">{c.city}</span>
           <span class="ml-2 text-sm text-gray-500">{c.state}</span>
