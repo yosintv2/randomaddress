@@ -49,6 +49,16 @@ export const GET: APIRoute = async () => {
   urls.push(url('cities/', '0.8', 'weekly'));
   urls.push(url('zip-codes/', '0.8', 'weekly'));
 
+  // /cities/{city}/ (global dedup)
+  const globalCitySeen = new Set<string>();
+  for (const city of cities) {
+    const citySlug = slugify(city.city);
+    if (!globalCitySeen.has(citySlug)) {
+      globalCitySeen.add(citySlug);
+      urls.push(url(`cities/${citySlug}/`, '0.7', 'weekly'));
+    }
+  }
+
   // Individual state pages
   for (const state of states) {
     const stateSlug = slugify(state.name);
@@ -59,18 +69,8 @@ export const GET: APIRoute = async () => {
     // /{state}/ (state root)
     urls.push(url(`${stateSlug}/`, '0.7', 'weekly'));
 
-    // /cities/{city}/
-    const seenCities = new Set<string>();
-    const stateCities = cities.filter(c => c.state === state.name);
-    for (const city of stateCities) {
-      const citySlug = slugify(city.city);
-      if (!seenCities.has(citySlug)) {
-        seenCities.add(citySlug);
-        urls.push(url(`cities/${citySlug}/`, '0.7', 'weekly'));
-      }
-    }
-
     // /{state}/{city}/
+    const stateCities = cities.filter(c => c.state === state.name);
     const stateCitySeen = new Set<string>();
     for (const city of stateCities) {
       const citySlug = slugify(city.city);
