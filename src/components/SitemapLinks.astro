@@ -2,6 +2,8 @@
 import states from '../data/states.json';
 import cities from '../data/cities.json';
 import zipcodes from '../data/zipcodes.json';
+import counties from '../data/counties.json';
+import areaCodes from '../data/areaCodes.json';
 import { slugify } from '../lib/seo';
 
 const seenCities = new Set<string>();
@@ -17,12 +19,27 @@ const uniqueZipcodes = zipcodes.filter(z => {
   seenZips.add(z.zip);
   return true;
 });
+
+const stateCountyMap = new Map<string, number>();
+for (const c of counties) {
+  stateCountyMap.set(c.state, (stateCountyMap.get(c.state) || 0) + 1);
+}
+
+const areaCodeEntries = Object.entries(areaCodes).flatMap(([abbr, codes]) =>
+  codes.map(code => ({ code, abbr }))
+);
+const seenCodes = new Set<string>();
+const uniqueAreaCodes = areaCodeEntries.filter(a => {
+  if (seenCodes.has(a.code)) return false;
+  seenCodes.add(a.code);
+  return true;
+});
 ---
 
 <section class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16" id="sitemap">
   <div class="text-center mb-12">
     <h2 class="section-heading mb-4">Explore All US Locations</h2>
-    <p class="section-sub mx-auto">Browse our complete directory of states, cities, and ZIP codes across the United States.</p>
+    <p class="section-sub mx-auto">Browse our complete directory of states, cities, ZIP codes, counties, and area codes across the United States.</p>
   </div>
 
   <div class="space-y-12">
@@ -82,6 +99,48 @@ const uniqueZipcodes = zipcodes.filter(z => {
       </div>
       <div class="text-center mt-4">
         <a href="/zip-codes/" class="text-sm font-medium text-brand-600 hover:text-brand-700 transition-colors">Browse all {uniqueZipcodes.length} US ZIP codes →</a>
+      </div>
+    </div>
+
+    <!-- Counties (first 20, then View All) -->
+    <div>
+      <div class="flex items-center justify-between mb-6">
+        <h3 class="text-xl font-bold text-gray-900 flex items-center gap-2">
+          <span class="w-1.5 h-6 rounded-full bg-purple-500"></span>
+          US Counties ({counties.length})
+        </h3>
+        <a href="/counties/" class="text-sm font-medium text-brand-600 hover:text-brand-700 transition-colors">View All Counties →</a>
+      </div>
+      <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-2">
+        {counties.slice(0, 20).map(c => (
+          <a href={`/${slugify(c.state)}/${slugify(c.name)}-county/`} class="glass-card rounded-lg px-3 py-2 text-sm text-gray-600 hover:text-brand-600 hover:shadow-md transition-all truncate">
+            {c.name} County, {c.state}
+          </a>
+        ))}
+      </div>
+      <div class="text-center mt-4">
+        <a href="/counties/" class="text-sm font-medium text-brand-600 hover:text-brand-700 transition-colors">Browse all {counties.length} US counties →</a>
+      </div>
+    </div>
+
+    <!-- Area Codes (first 20, then View All) -->
+    <div>
+      <div class="flex items-center justify-between mb-6">
+        <h3 class="text-xl font-bold text-gray-900 flex items-center gap-2">
+          <span class="w-1.5 h-6 rounded-full bg-rose-500"></span>
+          US Area Codes ({uniqueAreaCodes.length})
+        </h3>
+        <a href="/area-codes/" class="text-sm font-medium text-brand-600 hover:text-brand-700 transition-colors">View All Area Codes →</a>
+      </div>
+      <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-2">
+        {uniqueAreaCodes.slice(0, 20).map(a => (
+          <a href={`/area-codes/${a.code}/`} class="glass-card rounded-lg px-3 py-2 text-sm text-gray-600 hover:text-brand-600 hover:shadow-md transition-all truncate">
+            {a.code} ({a.abbr})
+          </a>
+        ))}
+      </div>
+      <div class="text-center mt-4">
+        <a href="/area-codes/" class="text-sm font-medium text-brand-600 hover:text-brand-700 transition-colors">Browse all {uniqueAreaCodes.length} US area codes →</a>
       </div>
     </div>
   </div>

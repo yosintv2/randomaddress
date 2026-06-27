@@ -155,6 +155,29 @@ export function getZipFAQs(zip: string, cityName: string, stateName: string): FA
   ];
 }
 
+export function getCountyFAQs(countyName: string, stateName: string): FAQItem[] {
+  return [
+    { question: `What is a ${countyName} County, ${stateName} address generator?`, answer: `A ${countyName} County address generator creates random but realistic addresses for ${countyName} County, ${stateName}, including cities, streets, ZIP codes, and phone numbers.` },
+    { question: `Are these real ${countyName} County addresses?`, answer: `No, these ${countyName} County addresses are randomly generated. They are fictional and for testing or educational purposes only.` },
+    { question: `What cities are in ${countyName} County?`, answer: `${countyName} County, ${stateName} includes several cities and towns. Our generator produces addresses across the county.` },
+    { question: `Is this tool free?`, answer: `Yes, the ${countyName} County address generator is completely free. No registration or account is required.` },
+    { question: `What information is included in each address?`, answer: `Each address includes a resident name, street address, city, state, ZIP code, phone number, and email address.` },
+    { question: `How does the ${countyName} County address generator work?`, answer: `Our generator combines random street names, numbers, and ZIP codes from datasets relevant to ${countyName} County, ${stateName}.` },
+  ];
+}
+
+export function getAreaCodeFAQs(areaCode: string, stateNames: string[]): FAQItem[] {
+  const stateList = stateNames.join(', ');
+  return [
+    { question: `What area code is ${areaCode}?`, answer: `Area code ${areaCode} serves ${stateList}. It is used for telephone numbers in the North American Numbering Plan.` },
+    { question: `Where is area code ${areaCode} located?`, answer: `Area code ${areaCode} covers regions in ${stateList}. Generate phone numbers and addresses for this area code.` },
+    { question: `Are phone numbers with area code ${areaCode} real?`, answer: `No, phone numbers generated with area code ${areaCode} are randomly created and fictional. They are for testing purposes only.` },
+    { question: `Is this tool free?`, answer: `Yes, our area code generator is completely free to use with no registration required.` },
+    { question: `What information is included?`, answer: `Each address includes a resident name, street address, city, state, ZIP code, phone number with area code ${areaCode}, and email address.` },
+    { question: `How does the area code generator work?`, answer: `Our generator combines real address data with area code ${areaCode} to create realistic ${stateList} addresses and phone numbers.` },
+  ];
+}
+
 export function getStateContent(stateName: string, cities: string[]): string[] {
   const cityList = cities.length > 5
     ? cities.slice(0, 5).join(', ') + `, and ${cities.length - 5} more`
@@ -179,5 +202,22 @@ export function getZipContent(zip: string, cityName: string, stateName: string):
     `ZIP code ${zip} serves the ${cityName} area in ${stateName}. Our address generator for ZIP code ${zip} creates random but realistic addresses with resident names, street addresses, the correct city of ${cityName}, state of ${stateName}, and phone numbers with valid area codes. Each generated address is fresh and unique.`,
     `Use our generator for ZIP code ${zip} to produce test data for software development, validate address forms, populate demo databases, or create sample addresses for ${cityName}, ${stateName}. The generator produces consistent results where the ZIP code, city, and state all match correctly.`,
     `All addresses for ZIP code ${zip} are randomly generated and fictional. They are intended for testing and educational purposes only. No real personal data is used, stored, or exposed. This makes our generator compliant with privacy best practices and data protection regulations.`,
+  ];
+}
+
+export function getCountyContent(countyName: string, stateName: string): string[] {
+  return [
+    `Our ${countyName} County, ${stateName} address generator creates random but realistic addresses for ${countyName} County. Each address includes a resident name, street address, city, state, ZIP code, phone number, and email address. All data is consistent with ${stateName} regional patterns.`,
+    `Use our ${countyName} County generator for software testing, form validation, demo data population, and educational projects. The generator produces unique addresses every time you click generate. No registration or account is needed.`,
+    `All addresses are randomly generated and completely fictional. They are designed for testing and development purposes only and should not be used for shipping, legal documents, or any official use. Our generator ensures that no real personal data is exposed while providing realistic-looking test data.`,
+  ];
+}
+
+export function getAreaCodeContent(areaCode: string, stateNames: string[]): string[] {
+  const stateList = stateNames.join(', ');
+  return [
+    `Area code ${areaCode} serves telephone numbers in ${stateList}. Our address generator for area code ${areaCode} creates random but realistic addresses and phone numbers with this area code prefix, including resident names, street addresses, cities, states, and ZIP codes.`,
+    `Use our generator for area code ${areaCode} to produce test data for software development, validate phone number forms, populate demo databases, or create sample ${stateList} addresses with consistent area codes. Each generated entry is fresh and unique.`,
+    `All addresses and phone numbers for area code ${areaCode} are randomly generated and fictional. They are intended for testing and educational purposes only. No real personal data is used, stored, or exposed.`,
   ];
 }

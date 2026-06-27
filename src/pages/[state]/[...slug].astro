@@ -3,13 +3,14 @@ import Layout from '../../layouts/Layout.astro';
 import AddressCard from '../../components/AddressCard.astro';
 import Breadcrumbs from '../../components/Breadcrumbs.astro';
 import FAQs from '../../components/FAQs.astro';
-import { getCities, getStates, getZipcodes } from '../../lib/generator';
-import { buildTitle, slugify, SITE_URL, getFAQSchema, getStateFAQs, getCityFAQs, getZipFAQs, getStateContent, getCityContent, getZipContent } from '../../lib/seo';
+import { getCities, getStates, getZipcodes, getCounties } from '../../lib/generator';
+import { buildTitle, slugify, SITE_URL, getFAQSchema, getStateFAQs, getCityFAQs, getZipFAQs, getCountyFAQs, getStateContent, getCityContent, getZipContent, getCountyContent } from '../../lib/seo';
 
 export function getStaticPaths() {
   const allStates = getStates();
   const allCities = getCities();
   const allZips = getZipcodes();
+  const allCounties = getCounties();
   const seen = new Set<string>();
   const paths = [];
 
@@ -30,6 +31,14 @@ export function getStaticPaths() {
       seen.add(key);
       paths.push({ params: { state: stateSlug, slug: z.zip } });
     }
+    const stateCounties = allCounties.filter(c => c.state === s.name);
+    for (const co of stateCounties) {
+      const countySlug = slugify(co.name) + '-county';
+      const key = `${stateSlug}/${countySlug}`;
+      if (seen.has(key)) continue;
+      seen.add(key);
+      paths.push({ params: { state: stateSlug, slug: countySlug } });
+    }
   }
   return paths;
 }
@@ -45,14 +54,21 @@ if (!state) {
 }
 
 const isZip = /^\d{5}$/.test(slug || '');
-let type: 'city' | 'zip';
+const isCounty = (slug || '').endsWith('-county');
+let type: 'city' | 'zip' | 'county';
 let cityName: string | undefined;
 let zipData: { zip: string; city: string; state: string } | undefined;
+let countyName: string | undefined;
 
 if (isZip) {
   zipData = getZipcodes().find(z => z.zip === slug);
   type = zipData ? 'zip' : 'city';
   cityName = zipData ? zipData.city : '';
+} else if (isCounty) {
+  type = 'county';
+  const countySlug = slug!.replace(/-county$/, '');
+  const countyEntry = getCounties().find(c => slugify(c.name) === countySlug && c.state === state.name);
+  countyName = countyEntry ? countyEntry.name : '';
 } else {
   type = 'city';
   const cityEntry = getCities().find(c => slugify(c.city) === slug && c.state === state.name);
@@ -67,7 +83,26 @@ let canonical: string;
 let breadcrumbs: { name: string; url: string }[];
 let placeSchema: Record<string, unknown>;
 
-if (type === 'city') {
+if (type === 'county') {
+  const resolvedCounty = (countyName || slug!.replace(/-county$/, '')).replace(/\b\w/g, c => c.toUpperCase());
+  title = buildTitle(`${resolvedCounty} County, ${state.name} Address Generator - Random ${resolvedCounty} Addresses`);
+  description = `Generate random addresses for ${resolvedCounty} County, ${state.name}. Free random address generator with ZIP codes and phone numbers.`;
+  heading = `${resolvedCounty} County, ${state.name} Address Generator`;
+  keywords = `${resolvedCounty} County ${state.name} address, random ${resolvedCounty} County address, ${state.name} test data, ${resolvedCounty} County address generator, ${resolvedCounty} County fake address, free ${resolvedCounty} County address`;
+  canonical = `${SITE_URL}/${stateSlug}/${slug}/`;
+  breadcrumbs = [
+    { name: 'Home', url: '/' },
+    { name: state.name, url: `/states/${stateSlug}/` },
+    { name: `${resolvedCounty} County`, url: `/${stateSlug}/${slug}/` },
+  ];
+  placeSchema = {
+    '@context': 'https://schema.org',
+    '@type': 'Place',
+    name: `${resolvedCounty} County, ${state.name} Address Generator`,
+    description,
+    address: { '@type': 'PostalAddress', addressRegion: state.name, addressCountry: 'US' },
+  };
+} else if (type === 'city') {
   const resolvedCity = cityName || '';
   title = buildTitle(`${resolvedCity}, ${state.name} Address Generator - Random ${resolvedCity} Addresses`);
   description = `Generate random addresses for ${resolvedCity}, ${state.name}. Free random address generator with ZIP codes and phone numbers.`;
@@ -124,7 +159,9 @@ if (type === 'city') {
 }
 
 let faqs: { question: string; answer: string }[];
-if (type === 'city') {
+if (type === 'county') {
+  faqs = getCountyFAQs(countyName || '', state.name);
+} else if (type === 'city') {
   faqs = getCityFAQs(cityName || '', state.name);
 } else if (zipData) {
   faqs = getZipFAQs(zipData.zip, zipData.city, zipData.state);
@@ -137,7 +174,9 @@ const cardCity = type === 'city' ? cityName : '';
 const cardZip = zipData ? zipData.zip : '';
 
 let contentParagraphs: string[];
-if (type === 'city') {
+if (type === 'county') {
+  contentParagraphs = getCountyContent(countyName || '', state.name);
+} else if (type === 'city') {
   const cityZipCount = getZipcodes().filter(z => z.city === cityName).length;
   contentParagraphs = getCityContent(cityName || '', state.name, cityZipCount);
 } else if (zipData) {

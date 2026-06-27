@@ -4,6 +4,8 @@ import zipcodes from '../data/zipcodes.json';
 import streets from '../data/streets.json';
 import firstNames from '../data/firstNames.json';
 import lastNames from '../data/lastNames.json';
+import counties from '../data/counties.json';
+import areaCodesData from '../data/areaCodes.json';
 
 export interface Address {
   name: string;
@@ -30,19 +32,8 @@ function pick<T>(arr: T[]): T {
 }
 
 function randomPhone(stateAbbr: string): string {
-  const areaCodes: Record<string, string> = {
-    CA: '213', TX: '713', NY: '212', FL: '305', IL: '312',
-    PA: '215', OH: '614', GA: '404', NC: '704', MI: '313',
-    NJ: '201', VA: '703', WA: '206', AZ: '602', MA: '617',
-    TN: '615', IN: '317', MO: '314', MD: '301', WI: '414',
-    CO: '303', MN: '612', SC: '803', AL: '205', LA: '504',
-    KY: '502', OR: '503', OK: '405', CT: '203', IA: '515',
-    MS: '601', AR: '501', KS: '913', UT: '801', NV: '702',
-    NM: '505', WV: '304', NE: '402', ID: '208', HI: '808',
-    ME: '207', NH: '603', RI: '401', MT: '406', DE: '302',
-    SD: '605', ND: '701', AK: '907', VT: '802', WY: '307',
-  };
-  const area = areaCodes[stateAbbr] || '555';
+  const codes = (areaCodesData as Record<string, string[]>)[stateAbbr];
+  const area = codes ? pick(codes) : '555';
   const prefix = String(Math.floor(Math.random() * 900) + 100);
   const line = String(Math.floor(Math.random() * 9000) + 1000);
   return `(${area})${prefix}-${line}`;
@@ -156,6 +147,12 @@ export function generateAddressForZip(zip: string): Address {
   };
 }
 
+export function generateAddressForCounty(countyName: string): Address {
+  const countyEntry = counties.find(c => c.name.toLowerCase() === countyName.toLowerCase());
+  const stateName = countyEntry ? countyEntry.state : pick(states).name;
+  return generateAddressForState(stateName);
+}
+
 export function generatePerson() {
   const firstName = pick(firstNames);
   const lastName = pick(lastNames);
@@ -243,4 +240,12 @@ export function getZipcodes() {
 
 export function getStreets() {
   return streets;
+}
+
+export function getCounties() {
+  return counties;
+}
+
+export function getAreaCodes() {
+  return areaCodesData as Record<string, string[]>;
 }

@@ -1,0 +1,74 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import AddressCard from '../../components/AddressCard.astro';
+import Breadcrumbs from '../../components/Breadcrumbs.astro';
+import FAQs from '../../components/FAQs.astro';
+import { getAreaCodes, getStates } from '../../lib/generator';
+import { buildTitle, slugify, SITE_URL, getFAQSchema, getAreaCodeFAQs, getAreaCodeContent } from '../../lib/seo';
+
+export function getStaticPaths() {
+  const areaCodes = getAreaCodes();
+  const stateMap = new Map<string, string>();
+  for (const s of getStates()) {
+    stateMap.set(s.abbr, s.name);
+  }
+
+  const seen = new Set<string>();
+  return Object.entries(areaCodes).flatMap(([abbr, codes]) =>
+    codes.map(code => {
+      if (seen.has(code)) return null;
+      seen.add(code);
+      return { params: { code }, props: { code, stateNames: [stateMap.get(abbr) || abbr] } };
+    })
+  ).filter(Boolean) as { params: { code: string }; props: { code: string; stateNames: string[] } }[];
+}
+
+const { code } = Astro.params;
+const { code: areaCode, stateNames } = Astro.props;
+
+if (!areaCode) {
+  Astro.redirect('/404');
+  return;
+}
+
+const title = buildTitle(`Area Code ${areaCode} - Random Address and Phone Generator for ${stateNames.join(', ')}`);
+const description = `Generate random addresses and phone numbers with area code ${areaCode}. Free address generator for ${stateNames.join(', ')}.`;
+const keywords = `area code ${areaCode}, ${areaCode} area code, random ${areaCode} phone number, ${areaCode} address, ${areaCode} phone, ${stateNames.join(' ')} area code, ${areaCode} test data`;
+const faqs = getAreaCodeFAQs(areaCode, stateNames);
+const canonical = `${SITE_URL}/area-codes/${areaCode}/`;
+const areaContent = getAreaCodeContent(areaCode, stateNames);
+---
+
+<Layout title={title} description={description} keywords={keywords} canonical={canonical}>
+  <Breadcrumbs items={[
+    { name: 'Home', url: '/' },
+    { name: 'Area Codes', url: '/area-codes/' },
+    { name: `Area Code ${areaCode}`, url: `/area-codes/${areaCode}/` },
+  ]} />
+
+  <script slot="schema" type="application/ld+json" set:html={JSON.stringify({
+    '@context': 'https://schema.org',
+    '@type': 'Place',
+    name: `Area Code ${areaCode} Address Generator`,
+    description,
+    address: { '@type': 'PostalAddress', addressCountry: 'US' },
+  })} />
+  <script slot="schema" type="application/ld+json" set:html={JSON.stringify(getFAQSchema(faqs))} />
+
+  <section class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+    <div class="text-center mb-8">
+      <h1 class="text-3xl lg:text-4xl font-bold text-gray-900 mb-3">Area Code {areaCode} - Address & Phone Generator</h1>
+      <p class="text-lg text-gray-600 max-w-2xl mx-auto">Generate random addresses and phone numbers with area code {areaCode} for {stateNames.join(', ')}.</p>
+    </div>
+
+    <AddressCard />
+  </section>
+
+  <section class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+    <div class="max-w-3xl mx-auto space-y-4 text-gray-600 leading-relaxed">
+      {areaContent.map(p => <p>{p}</p>)}
+    </div>
+  </section>
+
+  <FAQs faqs={faqs} />
+</Layout>

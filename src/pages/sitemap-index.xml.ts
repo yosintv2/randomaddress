@@ -1,5 +1,5 @@
 import type { APIRoute } from 'astro';
-import { getStates, getCities, getZipcodes } from '../lib/generator';
+import { getStates, getCities, getZipcodes, getCounties, getAreaCodes } from '../lib/generator';
 import { SITE_URL, slugify } from '../lib/seo';
 import { articles } from '../lib/blog';
 
@@ -43,11 +43,15 @@ export const GET: APIRoute = async () => {
   const states = getStates();
   const cities = getCities();
   const zips = getZipcodes();
+  const counties = getCounties();
+  const areaCodes = getAreaCodes();
 
-  // State index pages
+  // Index pages
   urls.push(url('states/', '0.8', 'weekly'));
   urls.push(url('cities/', '0.8', 'weekly'));
   urls.push(url('zip-codes/', '0.8', 'weekly'));
+  urls.push(url('counties/', '0.8', 'weekly'));
+  urls.push(url('area-codes/', '0.8', 'weekly'));
 
   // /cities/{city}/ (global dedup)
   const globalCitySeen = new Set<string>();
@@ -90,6 +94,39 @@ export const GET: APIRoute = async () => {
     // /{state}/{zip}/
     for (const zip of stateZips) {
       urls.push(url(`${stateSlug}/${zip.zip}/`, '0.6', 'weekly'));
+    }
+
+    // /{state}/{county}-county/
+    const stateCounties = counties.filter(c => c.state === state.name);
+    const countySeen = new Set<string>();
+    for (const co of stateCounties) {
+      const countySlug = slugify(co.name) + '-county';
+      const key = `${stateSlug}/${countySlug}`;
+      if (!countySeen.has(key)) {
+        countySeen.add(key);
+        urls.push(url(`${stateSlug}/${countySlug}/`, '0.6', 'weekly'));
+      }
+    }
+  }
+
+  // /counties/{county}/ (global dedup)
+  const globalCountySeen = new Set<string>();
+  for (const co of counties) {
+    const countySlug = slugify(co.name);
+    if (!globalCountySeen.has(countySlug)) {
+      globalCountySeen.add(countySlug);
+      urls.push(url(`counties/${countySlug}/`, '0.6', 'weekly'));
+    }
+  }
+
+  // /area-codes/{code}/
+  const seenAreas = new Set<string>();
+  for (const [, codes] of Object.entries(areaCodes)) {
+    for (const code of codes) {
+      if (!seenAreas.has(code)) {
+        seenAreas.add(code);
+        urls.push(url(`area-codes/${code}/`, '0.6', 'weekly'));
+      }
     }
   }
 

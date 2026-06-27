@@ -1,0 +1,35 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import { getAreaCodes, getStates } from '../../lib/generator';
+
+const areaCodes = getAreaCodes();
+const stateMap = new Map<string, string>();
+for (const s of getStates()) {
+  stateMap.set(s.abbr, s.name);
+}
+
+const codeEntries = Object.entries(areaCodes)
+  .flatMap(([abbr, codes]) => codes.map(code => ({ code, states: [stateMap.get(abbr) || abbr] })))
+  .reduce((acc, { code, states }) => {
+    const existing = acc.find(e => e.code === code);
+    if (existing) existing.states.push(...states);
+    else acc.push({ code, states: [...states] });
+    return acc;
+  }, [] as { code: string; states: string[] }[])
+  .sort((a, b) => a.code.localeCompare(b.code));
+---
+
+<Layout title="All US Area Codes - Phone Numbers by Area Code">
+  <section class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+    <h1 class="text-3xl font-bold text-gray-900 mb-2">All US Area Codes ({codeEntries.length})</h1>
+    <p class="text-gray-600 mb-8">Browse all US area codes. Select an area code to generate random addresses with phone numbers for that area.</p>
+    <div class="grid sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3">
+      {codeEntries.map(e => (
+        <a href={`/area-codes/${e.code}/`} class="bg-white p-4 rounded-lg border border-gray-200 hover:border-blue-300 hover:shadow-sm transition">
+          <span class="text-xl font-bold text-brand-600">{e.code}</span>
+          <span class="ml-2 text-sm text-gray-500">{e.states.join(', ')}</span>
+        </a>
+      ))}
+    </div>
+  </section>
+</Layout>

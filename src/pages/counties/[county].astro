@@ -1,0 +1,73 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import AddressCard from '../../components/AddressCard.astro';
+import Breadcrumbs from '../../components/Breadcrumbs.astro';
+import FAQs from '../../components/FAQs.astro';
+import { getCounties, getZipcodes } from '../../lib/generator';
+import { buildTitle, slugify, SITE_URL, getFAQSchema, getCountyFAQs, getCountyContent } from '../../lib/seo';
+
+export function getStaticPaths() {
+  const allCounties = getCounties();
+  const seen = new Set<string>();
+  return allCounties.filter(c => {
+    const key = slugify(c.name);
+    if (seen.has(key)) return false;
+    seen.add(key);
+    return true;
+  }).map(c => ({
+    params: { county: slugify(c.name) },
+    props: { countyData: c },
+  }));
+}
+
+const { county: countySlug } = Astro.params;
+const countyData = Astro.props.countyData;
+
+if (!countyData) {
+  Astro.redirect('/404');
+  return;
+}
+
+const stateSlug = slugify(countyData.state);
+const fullCountyName = `${countyData.name} County`;
+const title = buildTitle(`${fullCountyName}, ${countyData.state} Address Generator - Random ${fullCountyName} Addresses`);
+const description = `Generate random ${fullCountyName}, ${countyData.state} addresses with ZIP codes and phone numbers. Free ${fullCountyName} address generator for testing.`;
+const keywords = `${fullCountyName} address generator, random ${fullCountyName} address, ${countyData.name} County ${countyData.state} ZIP codes, free ${countyData.name} County test data, ${countyData.name} County fake address`;
+const faqs = getCountyFAQs(countyData.name, countyData.state);
+const canonical = `${SITE_URL}/${stateSlug}/${countySlug}-county/`;
+const countyContent = getCountyContent(countyData.name, countyData.state);
+---
+
+<Layout title={title} description={description} keywords={keywords} canonical={canonical}>
+  <Breadcrumbs items={[
+    { name: 'Home', url: '/' },
+    { name: countyData.state, url: `/states/${stateSlug}/` },
+    { name: fullCountyName, url: `/counties/${countySlug}/` },
+  ]} />
+
+  <script slot="schema" type="application/ld+json" set:html={JSON.stringify({
+    '@context': 'https://schema.org',
+    '@type': 'Place',
+    name: `${fullCountyName} Address Generator`,
+    description,
+    address: { '@type': 'PostalAddress', addressRegion: countyData.state, addressCountry: 'US' },
+  })} />
+  <script slot="schema" type="application/ld+json" set:html={JSON.stringify(getFAQSchema(faqs))} />
+
+  <section class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+    <div class="text-center mb-8">
+      <h1 class="text-3xl lg:text-4xl font-bold text-gray-900 mb-3">{fullCountyName}, {countyData.state} Address Generator</h1>
+      <p class="text-lg text-gray-600 max-w-2xl mx-auto">Generate random addresses for {fullCountyName}, {countyData.state}. Including streets, ZIP codes, and phone numbers.</p>
+    </div>
+
+    <AddressCard state={countyData.state} />
+  </section>
+
+  <section class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+    <div class="max-w-3xl mx-auto space-y-4 text-gray-600 leading-relaxed">
+      {countyContent.map(p => <p>{p}</p>)}
+    </div>
+  </section>
+
+  <FAQs faqs={faqs} />
+</Layout>
